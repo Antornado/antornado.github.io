@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURREALITY — M.C. Escher Cloud Dream Journal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cinzel, Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Cinzel', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        obsidian: '#0a0c10',
+                        charcoal: '#12161d',
+                        slatestone: '#19202a',
+                        chalk: '#ebe8e0',
+                        parchment: '#c8c1b0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-obsidian: #0a0c10;
+            --bg-charcoal: #12161d;
+            --chalk: #ebe8e0;
+            --parchment: #c8c1b0;
+        }
+
+        body {
+            background-color: var(--bg-obsidian);
+            color: var(--chalk);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Active Escher Background Canvas */
+        #escher-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Architectural Lithograph Panels */
+        .escher-panel {
+            background: rgba(18, 22, 29, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(235, 232, 224, 0.16);
+            box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(235, 232, 224, 0.06);
+        }
+
+        .escher-subpanel {
+            background: rgba(10, 12, 16, 0.78);
+            border: 1px solid rgba(235, 232, 224, 0.12);
+        }
+
+        /* Isometric Corner Drafting Marks */
+        .draft-corners {
+            position: relative;
+        }
+        .draft-corners::before,
+        .draft-corners::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-color: rgba(235, 232, 224, 0.48);
+            pointer-events: none;
+        }
+        .draft-corners::before {
+            top: -1px;
+            left: -1px;
+            border-top: 2px solid;
+            border-left: 2px solid;
+        }
+        .draft-corners::after {
+            bottom: -1px;
+            right: -1px;
+            border-bottom: 2px solid;
+            border-right: 2px solid;
+        }
+
+        /* Custom Range Sliders */
+        input[type="range"].escher-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: rgba(235, 232, 224, 0.18);
+            border-radius: 999px;
+            outline: none;
+            transition: opacity 0.2s ease;
+        }
+        input[type="range"].escher-slider:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+        input[type="range"].escher-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 13px;
+            height: 13px;
+            background: #ebe8e0;
+            border: 2px solid #0a0c10;
+            transform: rotate(45deg);
+            cursor: pointer;
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+        input[type="range"].escher-slider:not(:disabled)::-webkit-slider-thumb:hover {
+            transform: rotate(45deg) scale(1.2);
+            background: #ffffff;
+        }
+        input[type="range"].escher-slider::-moz-range-thumb {
+            width: 13px;
+            height: 13px;
+            background: #ebe8e0;
+            border: 2px solid #0a0c10;
+            border-radius: 0;
+            transform: rotate(45deg);
+            cursor: pointer;
+        }
+
+        /* Kinetic Penrose Emblem Animation */
+        @keyframes penroseFloat {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.04); }
+        }
+        .kinetic-emblem {
+            animation: penroseFloat 24s ease-in-out infinite;
+        }
+        .motion-paused .kinetic-emblem {
+            animation-play-state: paused;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0c10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(235, 232, 224, 0.22);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(235, 232, 224, 0.45);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.85);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-chalk/20 selection:text-white">
+
+    <!-- Active M.C. Escher Isometric Tessellation, Penrose & Impossible Staircase Canvas -->
+    <canvas id="escher-canvas"></canvas>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="escher-panel draft-corners rounded-lg max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center gap-3 text-rose-400 mb-3">
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                <h3 class="font-display text-lg font-semibold text-chalk tracking-wide">Purge Dream Record?</h3>
+            </div>
+            <p class="text-parchment text-sm mb-6 leading-relaxed">
+                This blueprint will be permanently deleted from your Firestore archive. This action cannot be undone.
+            </p>
+            <div class="flex justify-end gap-3 font-mono text-xs">
+                <button id="confirm-cancel-btn" type="button" class="px-4 py-2 rounded border border-chalk/20 text-parchment hover:bg-chalk/10 transition">
+                    CANCEL
+                </button>
+                <button id="confirm-ok-btn" type="button" class="px-4 py-2 rounded bg-rose-700 hover:bg-rose-600 text-white font-semibold transition">
+                    DELETE RECORD
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== AUTHENTICATION VIEW ==================== -->
+    <div id="auth-view" class="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div class="escher-panel draft-corners rounded-xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+            <!-- Brand Header with Kinetic Penrose SVG -->
+            <div class="text-center mb-7">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full border border-chalk/25 bg-obsidian/90 mb-4 shadow-inner">
+                    <svg class="w-9 h-9 text-chalk kinetic-emblem" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round">
+                        <polygon points="50,12 88,78 12,78" opacity="0.9"/>
+                        <polygon points="50,28 73,68 27,68" opacity="0.65"/>
+                        <line x1="50" y1="12" x2="50" y2="28"/>
+                        <line x1="88" y1="78" x2="73" y2="68"/>
+                        <line x1="12" y1="78" x2="27" y2="68"/>
+                        <line x1="50" y1="28" x2="80" y2="78" opacity="0.5"/>
+                        <line x1="73" y1="68" x2="20" y2="78" opacity="0.5"/>
+                        <line x1="27" y1="68" x2="50" y2="20" opacity="0.5"/>
+                    </svg>
+                </div>
+                <div class="font-mono text-[10px] uppercase tracking-[0.28em] text-parchment/70 mb-1">
+                    NOCTURNE // SURREALITY-PROJECT
+                </div>
+                <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-wider text-chalk">SURREALITY</h1>
+                <p class="text-xs text-parchment/80 mt-1.5">M.C. Escher Dream Cartography &amp; Sensory Index</p>
+            </div>
+
+            <!-- Auth Mode Tabs -->
+            <div class="grid grid-cols-2 p-1 rounded-lg bg-obsidian border border-chalk/15 mb-6 font-mono text-xs">
+                <button id="tab-signin" type="button" class="py-2 rounded bg-chalk text-obsidian font-semibold transition">
+                    SIGN IN
+                </button>
+                <button id="tab-signup" type="button" class="py-2 rounded text-parchment hover:text-white transition">
+                    REGISTER
+                </button>
+            </div>
+
+            <!-- Email / Password Form -->
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label for="auth-email" class="block font-mono text-[11px] uppercase tracking-wider text-parchment mb-1.5">Email Address</label>
+                    <div class="relative">
+                        <i data-lucide="mail" class="w-4 h-4 text-parchment/60 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input id="auth-email" type="email" required placeholder="dreamer@surreality.app"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-obsidian border border-chalk/20 text-sm text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="auth-password" class="block font-mono text-[11px] uppercase tracking-wider text-parchment mb-1.5">Password</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="w-4 h-4 text-parchment/60 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input id="auth-password" type="password" required minlength="6" placeholder="••••••••"
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-obsidian border border-chalk/20 text-sm text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition">
+                    </div>
+                </div>
+
+                <div id="auth-error" class="hidden p-3 rounded-lg bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs leading-relaxed"></div>
+
+                <button id="auth-submit-btn" type="submit"
+                    class="w-full py-2.5 px-4 rounded-lg bg-chalk hover:bg-white text-obsidian font-mono font-semibold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg">
+                    <span id="auth-submit-text">Enter Cloud Journal</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-5">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-chalk/15"></div>
+                </div>
+                <div class="relative flex justify-center font-mono text-[10px] uppercase tracking-widest">
+                    <span class="px-3 bg-charcoal text-parchment/60">or</span>
+                </div>
+            </div>
+
+            <!-- Google Sign-In & Demo Sandbox -->
+            <div class="space-y-2.5">
+                <button id="google-signin-btn" type="button"
+                    class="w-full py-2.5 px-4 rounded-lg bg-obsidian hover:bg-slatestone text-chalk font-medium text-xs border border-chalk/20 transition flex items-center justify-center gap-2.5">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+                        <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.5H12v4.8h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                        <path fill="#FBBC05" d="M5.3 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.6 7.4C.6 9.4 0 11.6 0 14s.6 4.6 1.6 6.6l3.7-2.8z"/>
+                        <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.8C3.5 20.4 7.4 23 12 23z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+
+                <button id="demo-mode-auth-btn" type="button"
+                    class="w-full py-2 px-4 rounded-lg bg-transparent hover:bg-chalk/5 text-parchment/80 font-mono text-[11px] border border-dashed border-chalk/20 transition flex items-center justify-center gap-2">
+                    <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+                    <span>Interactive Demo Mode (No Login)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN APPLICATION VIEW ==================== -->
+    <div id="app-view" class="relative z-10 hidden pb-20">
+        <!-- Sticky Top Architectural Header -->
+        <header class="sticky top-0 z-30 escher-panel border-b border-chalk/15">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+                <!-- Left: Penrose Emblem, Title & Live Sync Status -->
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-lg border border-chalk/30 bg-obsidian flex items-center justify-center text-chalk shrink-0">
+                        <svg class="w-5 h-5 kinetic-emblem" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="5">
+                            <polygon points="50,12 88,78 12,78"/>
+                            <polygon points="50,30 72,68 28,68" opacity="0.6"/>
+                        </svg>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-display font-bold text-chalk tracking-wider text-base sm:text-lg">SURREALITY</span>
+                            <span id="sync-badge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[10px] uppercase tracking-wider bg-emerald-950/80 text-emerald-300 border border-emerald-500/30">
+                                <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span id="sync-badge-text">SYNCED TO CLOUD</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Controls: Motion Toggle, Import, Export, Sign Out -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="toggle-motion-btn" type="button" title="Pause/Resume Background Geometry"
+                        class="p-2 sm:px-2.5 sm:py-1.5 rounded-lg bg-obsidian hover:bg-slatestone text-parchment hover:text-chalk border border-chalk/20 font-mono text-[11px] transition flex items-center gap-1.5">
+                        <i id="motion-icon" data-lucide="pause" class="w-3.5 h-3.5"></i>
+                        <span class="hidden xl:inline" id="motion-label">MOTION: ON</span>
+                    </button>
+
+                    <input type="file" id="import-json-input" accept=".json" class="hidden">
+
+                    <button id="import-json-btn" type="button" title="Import JSON Backup"
+                        class="p-2 sm:px-2.5 sm:py-1.5 rounded-lg bg-obsidian hover:bg-slatestone text-parchment hover:text-chalk border border-chalk/20 font-mono text-[11px] transition flex items-center gap-1.5">
+                        <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                        <span class="hidden md:inline">IMPORT</span>
+                    </button>
+
+                    <!-- Export Dropdown -->
+                    <div class="relative" id="export-dropdown-wrapper">
+                        <button id="export-dropdown-btn" type="button"
+                            class="p-2 sm:px-2.5 sm:py-1.5 rounded-lg bg-obsidian hover:bg-slatestone text-chalk border border-chalk/20 font-mono text-[11px] transition flex items-center gap-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span class="hidden sm:inline">EXPORT</span>
+                            <i data-lucide="chevron-down" class="w-3 h-3 text-parchment"></i>
+                        </button>
+
+                        <div id="export-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-lg escher-panel border border-chalk/25 shadow-2xl py-1.5 z-40">
+                            <div class="px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-parchment/60">
+                                1-Click Backup
+                            </div>
+                            <button id="export-json-btn" type="button" class="w-full px-3.5 py-2 text-left text-xs text-chalk hover:bg-chalk/10 flex items-center gap-2.5 transition">
+                                <i data-lucide="file-json" class="w-4 h-4 text-sky-400"></i>
+                                <div>
+                                    <div class="font-medium">JSON Archive (.json)</div>
+                                    <div class="text-[10px] text-parchment/70">Full sensory, N/A &amp; tag data</div>
+                                </div>
+                            </button>
+                            <button id="export-md-btn" type="button" class="w-full px-3.5 py-2 text-left text-xs text-chalk hover:bg-chalk/10 flex items-center gap-2.5 transition">
+                                <i data-lucide="file-text" class="w-4 h-4 text-amber-400"></i>
+                                <div>
+                                    <div class="font-medium">Markdown Codex (.md)</div>
+                                    <div class="text-[10px] text-parchment/70">Human-readable journal</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- User Email & Sign Out -->
+                    <div class="flex items-center gap-2 pl-2 border-l border-chalk/15">
+                        <span id="user-display-email" class="hidden lg:inline font-mono text-[11px] text-parchment/75 max-w-[140px] truncate"></span>
+                        <button id="signout-btn" type="button" title="Sign Out"
+                            class="p-2 rounded-lg text-parchment hover:text-rose-300 hover:bg-rose-950/40 transition flex items-center gap-1 font-mono text-[11px]">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                            <span class="hidden sm:inline">SIGN OUT</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace Container -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
+
+            <!-- Firestore Diagnostic / Error Banner (Shown only if a cloud read/write fails) -->
+            <div id="firestore-diagnostic-banner" class="hidden escher-panel rounded-xl p-4 border border-rose-500/50 bg-rose-950/40 text-rose-100">
+                <div class="flex items-start gap-3">
+                    <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+                    <div class="text-xs space-y-1.5 flex-1">
+                        <div class="font-mono font-bold uppercase tracking-wider text-rose-300">
+                            Firestore Cloud Diagnostic Alert
+                        </div>
+                        <p id="firestore-diagnostic-msg" class="leading-relaxed text-rose-100/90"></p>
+                        <p class="font-mono text-[11px] text-parchment/80">
+                            Check Firebase Console &rarr; Databases &amp; Storage &rarr; Firestore &rarr; Rules tab and ensure authenticated users can read/write <code class="text-chalk">users/{userId}/dreams/{document=**}</code>.
+                        </p>
+                    </div>
+                    <button id="dismiss-diagnostic-btn" type="button" class="text-rose-300 hover:text-white p-1">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Telemetry Summary Bar -->
+            <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div class="escher-panel draft-corners rounded-lg p-3.5">
+                    <div class="font-mono text-[10px] uppercase tracking-wider text-parchment/70">Total Dreams</div>
+                    <div id="stat-total" class="font-mono text-xl sm:text-2xl font-bold text-chalk mt-0.5">0</div>
+                </div>
+
+                <div class="escher-panel draft-corners rounded-lg p-3.5">
+                    <div class="font-mono text-[10px] uppercase tracking-wider text-parchment/70">Avg Vividness</div>
+                    <div class="flex items-baseline gap-1 mt-0.5">
+                        <span id="stat-avg-vivid" class="font-mono text-xl sm:text-2xl font-bold text-chalk">—</span>
+                        <span id="stat-avg-vivid-unit" class="font-mono text-xs text-parchment/60">/100</span>
+                    </div>
+                </div>
+
+                <div class="escher-panel draft-corners rounded-lg p-3.5">
+                    <div class="font-mono text-[10px] uppercase tracking-wider text-parchment/70">Lucid Dreams</div>
+                    <div class="flex items-baseline gap-1.5 mt-0.5">
+                        <span id="stat-lucid-pct" class="font-mono text-xl sm:text-2xl font-bold text-violet-300">0%</span>
+                        <span id="stat-lucid-count" class="font-mono text-[11px] text-parchment/60">(0)</span>
+                    </div>
+                </div>
+
+                <div class="escher-panel draft-corners rounded-lg p-3.5">
+                    <div class="font-mono text-[10px] uppercase tracking-wider text-parchment/70">Top Emotion</div>
+                    <div id="stat-emotion" class="font-display text-sm sm:text-base font-semibold text-chalk truncate mt-1">—</div>
+                </div>
+
+                <div class="escher-panel draft-corners rounded-lg p-3.5 col-span-2 sm:col-span-1">
+                    <div class="font-mono text-[10px] uppercase tracking-wider text-parchment/70">Top Dream Sign</div>
+                    <div id="stat-tag" class="font-mono text-xs sm:text-sm font-semibold text-sky-300 truncate mt-1.5">—</div>
+                </div>
+            </section>
+
+            <!-- Two-Column Workspace: Left Form (6 cols), Right Archive (6 cols) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- LEFT COLUMN: Dream Entry Form -->
+                <section class="lg:col-span-6 escher-panel draft-corners rounded-xl p-5 sm:p-6 shadow-2xl">
+                    <div class="flex items-center justify-between pb-4 mb-5 border-b border-chalk/15">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="compass" class="w-5 h-5 text-chalk"></i>
+                            <h2 id="form-heading" class="font-display text-lg font-semibold tracking-wide text-chalk">New Dream Blueprint</h2>
+                        </div>
+                        <button id="cancel-edit-btn" type="button" class="hidden font-mono text-[11px] px-2.5 py-1 rounded border border-chalk/25 text-parchment hover:text-white transition">
+                            CANCEL EDIT
+                        </button>
+                    </div>
+
+                    <form id="dream-form" class="space-y-5">
+                        <input type="hidden" id="dream-id" value="">
+
+                        <!-- Date & Lucid Toggle -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label for="dream-date" class="block font-mono text-[11px] uppercase tracking-wider text-parchment mb-1.5">Date</label>
+                                <input id="dream-date" type="date" required
+                                    class="w-full px-3 py-2 rounded-lg bg-obsidian border border-chalk/20 font-mono text-xs text-chalk focus:outline-none focus:border-chalk transition">
+                            </div>
+
+                            <div>
+                                <label class="block font-mono text-[11px] uppercase tracking-wider text-parchment mb-1.5">Lucidity State</label>
+                                <label class="flex items-center justify-between px-3.5 py-2 rounded-lg bg-obsidian border border-chalk/20 cursor-pointer hover:border-violet-400/50 transition h-[36px]">
+                                    <span class="font-mono text-xs text-violet-300 flex items-center gap-1.5">
+                                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                                        LUCID DREAM
+                                    </span>
+                                    <input id="dream-lucid" type="checkbox" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-slatestone rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-parchment peer-checked:after:bg-obsidian after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-400 relative"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Title & Setting -->
+                        <div class="space-y-3">
+                            <div>
+                                <label for="dream-title" class="block font-mono text-[11px] uppercase tracking-wider text-parchment mb-1.5">Dream Title</label>
+                                <input id="dream-title" type="text" required placeholder="e.g., The Stairway That Led Nowhere"
+                                    class="w-full px-3.5 py-2 rounded-lg bg-obsidian border border-chalk/20 text-sm text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition">
+                            </div>
+
+                            <div>
+                                <label for="dream-setting" class="block font-mono text-[11px] uppercase tracking-wider text-parchment mb-1.5">Setting &amp; Architecture</label>
+                                <input id="dream-setting" type="text" placeholder="e.g., Impossible isometric courtyard with shifting gravity"
+                                    class="w-full px-3.5 py-2 rounded-lg bg-obsidian border border-chalk/20 text-sm text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition">
+                            </div>
+                        </div>
+
+                        <!-- Narrative -->
+                        <div>
+                            <label for="dream-narrative" class="block font-mono text-[11px] uppercase tracking-wider text-parchment mb-1.5">Dream Narrative</label>
+                            <textarea id="dream-narrative" rows="4" required placeholder="Describe what happened, who appeared, and how the world behaved..."
+                                class="w-full px-3.5 py-2.5 rounded-lg bg-obsidian border border-chalk/20 text-sm text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition leading-relaxed"></textarea>
+                        </div>
+
+                        <!-- ==================== 100-POINT VIVIDNESS CALCULATOR WITH N/A TOGGLES ==================== -->
+                        <div class="escher-subpanel rounded-xl p-4 space-y-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <div class="font-mono text-[11px] uppercase tracking-wider text-chalk font-semibold flex items-center gap-1.5">
+                                        <i data-lucide="gauge" class="w-4 h-4 text-parchment"></i>
+                                        100-Point Vividness Calculator
+                                    </div>
+                                    <div id="vividness-formula-note" class="font-mono text-[10px] text-parchment/75 mt-0.5">
+                                        Raw: 50 / 100 applicable pts &bull; Normalized: 50/100
+                                    </div>
+                                    <div id="vividness-tier-label" class="font-mono text-[11px] text-sky-300 mt-0.5">
+                                        TIER: CLEAR PROJECTION
+                                    </div>
+                                </div>
+
+                                <!-- SVG Dial -->
+                                <div class="relative w-14 h-14 flex items-center justify-center shrink-0">
+                                    <svg class="w-14 h-14 -rotate-90" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(235,232,224,0.12)" stroke-width="4" />
+                                        <circle id="vividness-ring" cx="30" cy="30" r="24" fill="none" stroke="#ebe8e0" stroke-width="4"
+                                            stroke-dasharray="150.8" stroke-dashoffset="75.4" stroke-linecap="butt" class="transition-all duration-200" />
+                                    </svg>
+                                    <span id="vividness-total-num" class="absolute font-mono text-sm font-bold text-chalk">50</span>
+                                </div>
+                            </div>
+
+                            <!-- Part A: 5 Senses (0-10 each = 50 pts max) -->
+                            <div>
+                                <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-parchment/80 mb-2 pb-1 border-b border-chalk/10">
+                                    <span>1. Five Senses (10 pts each)</span>
+                                    <span id="senses-subtotal">25 / 50 PTS</span>
+                                </div>
+                                <div id="senses-sliders-container" class="space-y-2.5">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Part B: 4 Additional Dimensions (50 pts max total: 12.5 pts each = 50) -->
+                            <div>
+                                <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-parchment/80 mb-2 pb-1 border-b border-chalk/10">
+                                    <span>2. Additional Dimensions (12.5 pts each = 50)</span>
+                                    <span id="cognitive-subtotal">25 / 50 PTS</span>
+                                </div>
+                                <div id="cognitive-sliders-container" class="space-y-2.5">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== MULTI-EMOTION SELECTION ==================== -->
+                        <div class="escher-subpanel rounded-xl p-4 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="font-mono text-[11px] uppercase tracking-wider text-chalk font-semibold flex items-center gap-1.5">
+                                    <i data-lucide="heart-pulse" class="w-4 h-4 text-rose-300"></i>
+                                    Emotions (Select Multiple)
+                                </label>
+                                <span id="selected-emotions-count" class="font-mono text-[10px] text-parchment/70">0 SELECTED</span>
+                            </div>
+
+                            <div id="emotion-pills-container" class="flex flex-wrap gap-1.5">
+                                <!-- Rendered dynamically -->
+                            </div>
+
+                            <div class="flex gap-2 pt-1">
+                                <input id="custom-emotion-input" type="text" placeholder="Add custom emotion (e.g., Melancholic, Disoriented)..."
+                                    class="flex-1 px-3 py-1.5 rounded-lg bg-charcoal border border-chalk/15 text-xs text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition">
+                                <button id="add-custom-emotion-btn" type="button"
+                                    class="px-3 py-1.5 rounded-lg bg-slatestone hover:bg-chalk/15 text-chalk font-mono text-[11px] border border-chalk/15 transition">
+                                    + ADD
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ==================== 64 COLOR-CODED CATEGORIZED TAGS ==================== -->
+                        <div class="escher-subpanel rounded-xl p-4 space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <label class="font-mono text-[11px] uppercase tracking-wider text-chalk font-semibold flex items-center gap-1.5">
+                                    <i data-lucide="layers" class="w-4 h-4 text-sky-300"></i>
+                                    Dream Sign Tags (64 Color-Coded Motifs)
+                                </label>
+                                <span id="selected-tags-count" class="font-mono text-[10px] text-parchment/70">0 TAGGED</span>
+                            </div>
+
+                            <!-- Selected Tags Preview -->
+                            <div id="active-tags-list" class="flex flex-wrap gap-1.5 min-h-[26px] p-2 rounded-lg bg-charcoal/70 border border-chalk/10">
+                                <span class="font-mono text-[11px] text-parchment/45">Click color-coded tags below or type a custom tag...</span>
+                            </div>
+
+                            <!-- Subcategory Filter Tabs -->
+                            <div id="tag-category-tabs" class="flex flex-wrap gap-1.5">
+                                <!-- Rendered dynamically -->
+                            </div>
+
+                            <!-- Tag Search + Custom Tag Input -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="relative">
+                                    <i data-lucide="search" class="w-3.5 h-3.5 text-parchment/50 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                                    <input id="tag-library-search" type="text" placeholder="Search 64 dream sign tags..."
+                                        class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-charcoal border border-chalk/15 text-xs text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition">
+                                </div>
+                                <div class="flex gap-1.5">
+                                    <input id="custom-tag-input" type="text" placeholder="Custom tag..."
+                                        class="flex-1 px-3 py-1.5 rounded-lg bg-charcoal border border-chalk/15 text-xs text-chalk placeholder-parchment/35 focus:outline-none focus:border-chalk transition">
+                                    <button id="add-custom-tag-btn" type="button"
+                                        class="px-2.5 py-1.5 rounded-lg bg-slatestone hover:bg-chalk/15 text-chalk font-mono text-[11px] border border-chalk/15 transition">
+                                        + TAG
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tag Cloud -->
+                            <div id="tag-library-grid" class="max-h-48 overflow-y-auto pr-1 flex flex-wrap gap-1.5 pt-1">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button id="save-dream-btn" type="submit"
+                            class="w-full py-3 px-4 rounded-lg bg-chalk hover:bg-white text-obsidian font-mono font-bold text-xs uppercase tracking-widest shadow-xl transition flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            <span id="save-dream-text">SAVE DREAM TO CLOUD</span>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- RIGHT COLUMN: Search, Filters & Dream Archive -->
+                <section class="lg:col-span-6 space-y-4">
+                    <!-- Search & Filter Deck -->
+                    <div class="escher-panel draft-corners rounded-xl p-4 space-y-3">
+                        <div class="relative">
+                            <i data-lucide="search" class="w-4 h-4 text-parchment/60 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                            <input id="search-input" type="text" placeholder="Search titles, settings, emotions, tags, or notes..."
+                                class="w-full pl-10 pr-9 py-2.5 rounded-lg bg-obsidian border border-chalk/20 text-sm text-chalk placeholder-parchment/40 focus:outline-none focus:border-chalk transition">
+                            <button id="clear-search-btn" type="button" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-parchment hover:text-white">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <select id="filter-category-select"
+                                class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] bg-obsidian text-chalk border border-chalk/20 focus:outline-none focus:border-chalk">
+                                <option value="ALL">ALL CATEGORIES</option>
+                            </select>
+
+                            <select id="filter-tag-select"
+                                class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] bg-obsidian text-chalk border border-chalk/20 focus:outline-none focus:border-chalk">
+                                <option value="ALL">ALL TAGS</option>
+                            </select>
+
+                            <select id="filter-emotion-select"
+                                class="px-2.5 py-1.5 rounded-lg font-mono text-[11px] bg-obsidian text-chalk border border-chalk/20 focus:outline-none focus:border-chalk">
+                                <option value="ALL">ALL EMOTIONS</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                            <button id="filter-lucid-btn" type="button"
+                                class="px-3 py-1.5 rounded-lg font-mono text-[11px] bg-obsidian text-parchment border border-chalk/20 hover:border-violet-400/50 transition flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-violet-300"></i>
+                                <span>LUCID ONLY</span>
+                            </button>
+
+                            <div class="flex items-center gap-2.5 flex-1 min-w-[180px] max-w-xs">
+                                <span class="font-mono text-[10px] uppercase text-parchment/80 whitespace-nowrap">
+                                    MIN VIVIDNESS: <strong id="filter-vivid-val" class="text-chalk">0</strong>
+                                </span>
+                                <input id="filter-vivid-slider" type="range" min="0" max="100" value="0" class="escher-slider">
+                            </div>
+
+                            <button id="reset-filters-btn" type="button" class="hidden font-mono text-[11px] text-sky-300 hover:text-sky-200 underline">
+                                RESET
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="dreams-loading" class="hidden escher-panel rounded-xl p-10 text-center">
+                        <div class="inline-block w-8 h-8 border-2 border-chalk border-t-transparent rounded-full animate-spin mb-3"></div>
+                        <p class="font-mono text-xs text-parchment">LOADING DREAMS FROM FIRESTORE...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="dreams-empty" class="hidden escher-panel rounded-xl p-10 text-center border border-dashed border-chalk/25">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg border border-chalk/20 bg-obsidian text-chalk mb-3">
+                            <i data-lucide="compass" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-display text-base font-semibold text-chalk">No Dream Records Found</h3>
+                        <p class="text-xs text-parchment/75 mt-1 max-w-sm mx-auto leading-relaxed">
+                            Create your first entry on the left, or clear your search/filter criteria.
+                        </p>
+                    </div>
+
+                    <!-- Dream Cards List -->
+                    <div id="dreams-list" class="space-y-4"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== FIREBASE & APPLICATION LOGIC ==================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithCustomToken,
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore,
+            collection,
+            doc,
+            addDoc,
+            updateDoc,
+            deleteDoc,
+            onSnapshot,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // =========================================================================
+        // 1. EMBEDDED FIREBASE CONFIGURATION
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDxoUL_iluDGGN8nUye6BPO9AmnqZmoYDM",
+            authDomain: "surreality-project.firebaseapp.com",
+            projectId: "surreality-project",
+            storageBucket: "surreality-project.firebasestorage.app",
+            messagingSenderId: "861487581026",
+            appId: "1:861487581026:web:a8c42fc94c9439cfc6ce3b",
+            measurementId: "G-S347D12KG8"
+        };
+
+        const hasEnvFirebase = typeof __firebase_config !== 'undefined' && __firebase_config;
+        const activeFirebaseConfig = hasEnvFirebase ? JSON.parse(__firebase_config) : firebaseConfig;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'surreality-project';
+
+        // =========================================================================
+        // 2. VIVIDNESS METRICS, MULTI-EMOTIONS & 64 COLOR-CODED TAGS
+        // 5 Senses (10 pts each = 50 pts) + 4 Additional Dimensions (12.5 pts each = 50 pts) => 100 pts
+        // =========================================================================
+        const VIVIDNESS_METRICS = [
+            // 5 Senses (50 pts)
+            { id: 'sight', label: 'Sight (Visuals)', max: 10, step: 1, defaultVal: 5, group: 'senses' },
+            { id: 'sound', label: 'Sound (Audio)', max: 10, step: 1, defaultVal: 5, group: 'senses' },
+            { id: 'smell', label: 'Smell (Olfactory)', max: 10, step: 1, defaultVal: 5, group: 'senses' },
+            { id: 'taste', label: 'Taste (Gustatory)', max: 10, step: 1, defaultVal: 5, group: 'senses' },
+            { id: 'touch', label: 'Touch (Tactile)', max: 10, step: 1, defaultVal: 5, group: 'senses' },
+            // 4 Additional Dimensions (50 pts)
+            { id: 'narrative', label: 'Narrative Continuity', max: 12.5, step: 0.5, defaultVal: 6.5, group: 'cognitive' },
+            { id: 'emotionDepth', label: 'Emotional Immersion', max: 12.5, step: 0.5, defaultVal: 6.5, group: 'cognitive' },
+            { id: 'spatial', label: 'Spatial Detail', max: 12.5, step: 0.5, defaultVal: 6, group: 'cognitive' },
+            { id: 'recall', label: 'Recall Completeness', max: 12.5, step: 0.5, defaultVal: 6, group: 'cognitive' }
+        ];
+
+        const BUILTIN_EMOTIONS = [
+            'Nervous', 'Hesitant', 'Curious', 'Calm', 'Rushed',
+            'Surreal', 'Awe', 'Uneasy', 'Joyful', 'Detached',
+            'Anxious', 'Nostalgic', 'Confused', 'Determined', 'Peaceful', 'Dread'
+        ];
+
+        // 64 Color-Coded Tags across 6 Subcategories
+        const TAG_CATEGORIES = [
+            {
+                id: 'architecture',
+                name: 'Architecture & Spaces',
+                shortName: 'Architecture',
+                hex: '#38bdf8',
+                badgeBg: 'rgba(56, 189, 248, 0.14)',
+                badgeBorder: 'rgba(56, 189, 248, 0.42)',
+                badgeText: '#7dd3fc',
+                tags: [
+                    'Liminal Space', 'Endless Hallways', 'Impossible Geometry', 'Brutalist Concrete',
+                    'Abandoned Mall', 'Underground Tunnels', 'Labyrinth / Maze', 'Floating Islands',
+                    'Flooded Room', 'Glass Skyscraper', 'Childhood Home', 'Secret Doorway',
+                    'Spiral Staircase', 'Infinite Library', 'Retro Diner', 'Inverted Courtyard'
+                ]
+            },
+            {
+                id: 'physics',
+                name: 'Physics & Lucidity',
+                shortName: 'Physics & Lucid',
+                hex: '#a78bfa',
+                badgeBg: 'rgba(167, 139, 250, 0.15)',
+                badgeBorder: 'rgba(167, 139, 250, 0.45)',
+                badgeText: '#c4b5fd',
+                tags: [
+                    'Lucid Dream', 'False Awakening', 'Sleep Paralysis', 'Flying / Levitating',
+                    'Low Gravity', 'Falling', 'Time Loop', 'Teleportation',
+                    'Superhuman Speed', 'Shape-Shifting', 'Telekinesis', 'Glitching Reality'
+                ]
+            },
+            {
+                id: 'entities',
+                name: 'Entities & Characters',
+                shortName: 'Entities',
+                hex: '#fbbf24',
+                badgeBg: 'rgba(251, 191, 36, 0.14)',
+                badgeBorder: 'rgba(251, 191, 36, 0.42)',
+                badgeText: '#fcd34d',
+                tags: [
+                    'Faceless Crowd', 'Family Members', 'Old Friends', 'Shadow Figure',
+                    'Talking Animals', 'Giant Creatures', 'Doppelgänger / Clone',
+                    'Unbothered Bystanders', 'Mysterious Guide', 'Fictional / Historical Figure'
+                ]
+            },
+            {
+                id: 'events',
+                name: 'Events & Scenarios',
+                shortName: 'Events',
+                hex: '#34d399',
+                badgeBg: 'rgba(52, 211, 153, 0.14)',
+                badgeBorder: 'rgba(52, 211, 153, 0.42)',
+                badgeText: '#6ee7b7',
+                tags: [
+                    'Being Chased', 'High-Ropes / Heights', 'Out-of-Control Vehicle',
+                    'Taking an Exam', 'Lost / Searching', 'Exploring Ruins',
+                    'Performing on Stage', 'Natural Disaster', 'Heist / Sneaking', 'Time Running Out'
+                ]
+            },
+            {
+                id: 'sensory',
+                name: 'Sensory & Atmosphere',
+                shortName: 'Atmosphere',
+                hex: '#fb7185',
+                badgeBg: 'rgba(251, 113, 133, 0.14)',
+                badgeBorder: 'rgba(251, 113, 133, 0.42)',
+                badgeText: '#fda4af',
+                tags: [
+                    'Monochrome / Lithograph', 'Bioluminescent Glow', 'Eerie Silence',
+                    'Heavy Fog / Mist', 'Retro VHS Static', 'Cosmic Void',
+                    'Underwater Breathing', 'Hyper-Detailed Textures'
+                ]
+            },
+            {
+                id: 'objects',
+                name: 'Objects & Symbols',
+                shortName: 'Objects',
+                hex: '#818cf8',
+                badgeBg: 'rgba(129, 140, 248, 0.15)',
+                badgeBorder: 'rgba(129, 140, 248, 0.45)',
+                badgeText: '#a5b4fc',
+                tags: [
+                    'Locked Doors', 'Mirrors / Reflections', 'Broken Tech / Phones',
+                    'Clocks / Pocket Watch', 'Keys / Artifacts', 'Trains / Escalators'
+                ]
+            }
+        ];
+
+        const TAG_TO_CATEGORY = new Map();
+        TAG_CATEGORIES.forEach(cat => {
+            cat.tags.forEach(tag => {
+                TAG_TO_CATEGORY.set(tag.toLowerCase(), cat);
+            });
+        });
+
+        const CUSTOM_CATEGORY_STYLE = {
+            id: 'custom',
+            name: 'Custom Motifs',
+            shortName: 'Custom',
+            hex: '#ebe8e0',
+            badgeBg: 'rgba(235, 232, 224, 0.12)',
+            badgeBorder: 'rgba(235, 232, 224, 0.35)',
+            badgeText: '#ebe8e0'
+        };
+
+        function getTagCategory(tagName) {
+            return TAG_TO_CATEGORY.get(String(tagName).toLowerCase()) || CUSTOM_CATEGORY_STYLE;
+        }
+
+        // =========================================================================
+        // 3. STATE & DEMO SANDBOX RECORDS
+        // =========================================================================
+        let app = null;
+        let auth = null;
+        let db = null;
+        let currentUser = null;
+        let isDemoMode = false;
+        let unsubscribeDreams = null;
+
+        let allDreams = [];
+        let selectedTags = [];
+        let selectedEmotions = [];
+        let availableEmotions = [...BUILTIN_EMOTIONS];
+        let activeTagCategoryTab = 'ALL';
+
+        // Vividness values & per-metric N/A flags
+        let vividnessValues = {};
+        let vividnessNA = {};
+
+        let isSignUpMode = false;
+        let filterLucidOnly = false;
+        let expandedCardIds = new Set();
+
+        const DEMO_DREAMS = [
+            {
+                id: 'demo-1',
+                date: new Date().toISOString().split('T')[0],
+                title: 'Ascending the Endless Penrose Stair',
+                setting: 'Monochrome stone gallery where stairs loop seamlessly in every direction',
+                emotions: ['Curious', 'Awe', 'Hesitant'],
+                lucid: true,
+                vividnessScore: 86,
+                vividnessRawPoints: 64.5,
+                vividnessApplicableMax: 75,
+                vividnessValues: {
+                    sight: 10, sound: 7, smell: 0, taste: 0, touch: 8.5,
+                    narrative: 11, emotionDepth: 11, spatial: 12.5, recall: 10.5
+                },
+                vividnessNA: {
+                    sight: false, sound: false, smell: true, taste: true, touch: false,
+                    narrative: false, emotionDepth: false, spatial: false, recall: false
+                },
+                narrative: 'Smell and taste were absent from the dream, so I marked them N/A. Even without those senses, the visual stone grain, echoing footsteps, and impossible stair geometry made the dream remarkably vivid.',
+                tags: ['Impossible Geometry', 'Spiral Staircase', 'Lucid Dream', 'Monochrome / Lithograph'],
+                createdAtMs: Date.now() - 3600000
+            },
+            {
+                id: 'demo-2',
+                date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+                title: 'Late Train Through a Flooded Arcade',
+                setting: 'Glass-roofed transit station with knee-deep dark water and neon signs',
+                emotions: ['Rushed', 'Uneasy', 'Detached'],
+                lucid: false,
+                vividnessScore: 68,
+                vividnessRawPoints: 68,
+                vividnessApplicableMax: 100,
+                vividnessValues: {
+                    sight: 8, sound: 7, smell: 4, taste: 3, touch: 7,
+                    narrative: 8.5, emotionDepth: 9, spatial: 8, recall: 6.5
+                },
+                vividnessNA: {
+                    sight: false, sound: false, smell: false, taste: false, touch: false,
+                    narrative: false, emotionDepth: false, spatial: false, recall: false
+                },
+                narrative: 'I kept missing my platform because the escalators reversed direction whenever I stepped onto them. Everyone else stood calmly waist-deep in water.',
+                tags: ['Flooded Room', 'Trains / Escalators', 'Unbothered Bystanders', 'Bioluminescent Glow'],
+                createdAtMs: Date.now() - 86400000
+            }
+        ];
+
+        // =========================================================================
+        // 4. DOM REFERENCES
+        // =========================================================================
+        const els = {
+            authView: document.getElementById('auth-view'),
+            appView: document.getElementById('app-view'),
+            tabSignin: document.getElementById('tab-signin'),
+            tabSignup: document.getElementById('tab-signup'),
+            authForm: document.getElementById('auth-form'),
+            authEmail: document.getElementById('auth-email'),
+            authPassword: document.getElementById('auth-password'),
+            authError: document.getElementById('auth-error'),
+            authSubmitText: document.getElementById('auth-submit-text'),
+            googleSigninBtn: document.getElementById('google-signin-btn'),
+            demoModeAuthBtn: document.getElementById('demo-mode-auth-btn'),
+
+            syncBadge: document.getElementById('sync-badge'),
+            syncDot: document.getElementById('sync-dot'),
+            syncBadgeText: document.getElementById('sync-badge-text'),
+            userDisplayEmail: document.getElementById('user-display-email'),
+            signoutBtn: document.getElementById('signout-btn'),
+            toggleMotionBtn: document.getElementById('toggle-motion-btn'),
+            motionIcon: document.getElementById('motion-icon'),
+            motionLabel: document.getElementById('motion-label'),
+
+            importJsonBtn: document.getElementById('import-json-btn'),
+            importJsonInput: document.getElementById('import-json-input'),
+            exportDropdownBtn: document.getElementById('export-dropdown-btn'),
+            exportDropdownMenu: document.getElementById('export-dropdown-menu'),
+            exportJsonBtn: document.getElementById('export-json-btn'),
+            exportMdBtn: document.getElementById('export-md-btn'),
+
+            diagnosticBanner: document.getElementById('firestore-diagnostic-banner'),
+            diagnosticMsg: document.getElementById('firestore-diagnostic-msg'),
+            dismissDiagnosticBtn: document.getElementById('dismiss-diagnostic-btn'),
+
+            statTotal: document.getElementById('stat-total'),
+            statAvgVivid: document.getElementById('stat-avg-vivid'),
+            statAvgVividUnit: document.getElementById('stat-avg-vivid-unit'),
+            statLucidPct: document.getElementById('stat-lucid-pct'),
+            statLucidCount: document.getElementById('stat-lucid-count'),
+            statEmotion: document.getElementById('stat-emotion'),
+            statTag: document.getElementById('stat-tag'),
+
+            formHeading: document.getElementById('form-heading'),
+            cancelEditBtn: document.getElementById('cancel-edit-btn'),
+            dreamForm: document.getElementById('dream-form'),
+            dreamId: document.getElementById('dream-id'),
+            dreamDate: document.getElementById('dream-date'),
+            dreamLucid: document.getElementById('dream-lucid'),
+            dreamTitle: document.getElementById('dream-title'),
+            dreamSetting: document.getElementById('dream-setting'),
+            dreamNarrative: document.getElementById('dream-narrative'),
+
+            vividnessRing: document.getElementById('vividness-ring'),
+            vividnessTotalNum: document.getElementById('vividness-total-num'),
+            vividnessFormulaNote: document.getElementById('vividness-formula-note'),
+            vividnessTierLabel: document.getElementById('vividness-tier-label'),
+            sensesSubtotal: document.getElementById('senses-subtotal'),
+            cognitiveSubtotal: document.getElementById('cognitive-subtotal'),
+            sensesSlidersContainer: document.getElementById('senses-sliders-container'),
+            cognitiveSlidersContainer: document.getElementById('cognitive-sliders-container'),
+
+            selectedEmotionsCount: document.getElementById('selected-emotions-count'),
+            emotionPillsContainer: document.getElementById('emotion-pills-container'),
+            customEmotionInput: document.getElementById('custom-emotion-input'),
+            addCustomEmotionBtn: document.getElementById('add-custom-emotion-btn'),
+
+            selectedTagsCount: document.getElementById('selected-tags-count'),
+            activeTagsList: document.getElementById('active-tags-list'),
+            tagCategoryTabs: document.getElementById('tag-category-tabs'),
+            tagLibrarySearch: document.getElementById('tag-library-search'),
+            customTagInput: document.getElementById('custom-tag-input'),
+            addCustomTagBtn: document.getElementById('add-custom-tag-btn'),
+            tagLibraryGrid: document.getElementById('tag-library-grid'),
+
+            saveDreamBtn: document.getElementById('save-dream-btn'),
+            saveDreamText: document.getElementById('save-dream-text'),
+
+            searchInput: document.getElementById('search-input'),
+            clearSearchBtn: document.getElementById('clear-search-btn'),
+            filterCategorySelect: document.getElementById('filter-category-select'),
+            filterTagSelect: document.getElementById('filter-tag-select'),
+            filterEmotionSelect: document.getElementById('filter-emotion-select'),
+            filterLucidBtn: document.getElementById('filter-lucid-btn'),
+            filterVividSlider: document.getElementById('filter-vivid-slider'),
+            filterVividVal: document.getElementById('filter-vivid-val'),
+            resetFiltersBtn: document.getElementById('reset-filters-btn'),
+
+            dreamsLoading: document.getElementById('dreams-loading'),
+            dreamsEmpty: document.getElementById('dreams-empty'),
+            dreamsList: document.getElementById('dreams-list'),
+
+            confirmModal: document.getElementById('confirm-modal'),
+            confirmCancelBtn: document.getElementById('confirm-cancel-btn'),
+            confirmOkBtn: document.getElementById('confirm-ok-btn'),
+            toastContainer: document.getElementById('toast-container')
+        };
+
+        // =========================================================================
+        // 5. LIVE SYNC STATUS & DIAGNOSTIC HELPER
+        // =========================================================================
+        function setSyncStatus(state, customText) {
+            if (state === 'saving') {
+                els.syncBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[10px] uppercase tracking-wider bg-sky-950/90 text-sky-200 border border-sky-400/40";
+                els.syncDot.className = "w-1.5 h-1.5 rounded-full bg-sky-300 animate-ping";
+                els.syncBadgeText.textContent = customText || "SAVING TO CLOUD...";
+            } else if (state === 'error') {
+                els.syncBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[10px] uppercase tracking-wider bg-rose-950/90 text-rose-200 border border-rose-500/50";
+                els.syncDot.className = "w-1.5 h-1.5 rounded-full bg-rose-400";
+                els.syncBadgeText.textContent = customText || "CLOUD SYNC ERROR";
+            } else if (state === 'demo') {
+                els.syncBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[10px] uppercase tracking-wider bg-amber-950/80 text-amber-300 border border-amber-500/30";
+                els.syncDot.className = "w-1.5 h-1.5 rounded-full bg-amber-400";
+                els.syncBadgeText.textContent = customText || "DEMO MODE";
+            } else {
+                els.syncBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[10px] uppercase tracking-wider bg-emerald-950/80 text-emerald-300 border border-emerald-500/30";
+                els.syncDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse";
+                els.syncBadgeText.textContent = customText || "SYNCED TO CLOUD";
+            }
+        }
+
+        function showDiagnosticError(message) {
+            els.diagnosticMsg.textContent = message;
+            els.diagnosticBanner.classList.remove('hidden');
+            setSyncStatus('error', 'CLOUD SYNC ERROR');
+        }
+
+        function clearDiagnosticError() {
+            els.diagnosticBanner.classList.add('hidden');
+        }
+
+        els.dismissDiagnosticBtn.addEventListener('click', clearDiagnosticError);
+
+        // =========================================================================
+        // 6. ACTIVE M.C. ESCHER ISOMETRIC TESSELLATION & NECKER CUBE CANVAS
+        // =========================================================================
+        let ambientMotionEnabled = true;
+
+        function initEscherCanvas() {
+            const canvas = document.getElementById('escher-canvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+            let mouseX = width * 0.5;
+            let mouseY = height * 0.5;
+            let time = 0;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            const figures = Array.from({ length: 7 }, (_, i) => ({
+                xRatio: (i + 0.5) / 7,
+                yRatio: ((i * 39) % 100) / 100,
+                size: 28 + (i % 4) * 14,
+                speed: 0.0022 + (i % 3) * 0.0011,
+                phase: i * 1.15,
+                driftY: 0.07 + (i % 3) * 0.04
+            }));
+
+            function drawNeckerCube(cx, cy, r, angle, alpha) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle);
+                ctx.strokeStyle = `rgba(235, 232, 224, ${alpha})`;
+                ctx.lineWidth = 1;
+
+                // Outer hexagon
+                ctx.beginPath();
+                for (let k = 0; k < 6; k++) {
+                    const a = (Math.PI / 3) * k - Math.PI / 6;
+                    const px = Math.cos(a) * r;
+                    const py = Math.sin(a) * r;
+                    if (k === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.stroke();
+
+                // Center vertex spokes
+                for (let k = 0; k < 3; k++) {
+                    const a = (Math.PI * 2 / 3) * k - Math.PI / 6;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+                    ctx.stroke();
+                }
+
+                // Inner impossible frame
+                const r2 = r * 0.52;
+                ctx.beginPath();
+                for (let k = 0; k < 6; k++) {
+                    const a = (Math.PI / 3) * k - Math.PI / 6;
+                    const px = Math.cos(a) * r2;
+                    const py = Math.sin(a) * r2;
+                    if (k === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            function renderFrame() {
+                ctx.clearRect(0, 0, width, height);
+
+                const parallaxX = ((mouseX / Math.max(1, width)) - 0.5) * 24;
+                const parallaxY = ((mouseY / Math.max(1, height)) - 0.5) * 24;
+
+                // Drifting Isometric Grid
+                const tileW = 84;
+                const tileH = 48.5;
+                const offsetX = (time * 9 + parallaxX) % tileW;
+                const offsetY = (time * 5.5 + parallaxY) % (tileH * 2);
+
+                ctx.strokeStyle = 'rgba(235, 232, 224, 0.042)';
+                ctx.lineWidth = 1;
+
+                const cols = Math.ceil(width / tileW) + 3;
+                const rows = Math.ceil(height / tileH) + 4;
+
+                for (let row = -2; row < rows; row++) {
+                    for (let col = -2; col < cols; col++) {
+                        const x = col * tileW + (row % 2 === 0 ? 0 : tileW / 2) + offsetX;
+                        const y = row * tileH + offsetY;
+
+                        ctx.beginPath();
+                        ctx.moveTo(x, y - tileH / 2);
+                        ctx.lineTo(x + tileW / 2, y);
+                        ctx.lineTo(x, y + tileH / 2);
+                        ctx.lineTo(x - tileW / 2, y);
+                        ctx.closePath();
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x, y + tileH / 2);
+                        ctx.stroke();
+                    }
+                }
+
+                // Floating rotating Necker cubes
+                figures.forEach((fig) => {
+                    const fx = fig.xRatio * width + Math.sin(time * 0.4 + fig.phase) * 35 - parallaxX * 0.7;
+                    const fy = ((fig.yRatio * height + time * 13 * fig.driftY) % (height + 120)) - 60 - parallaxY * 0.7;
+                    const rot = time * fig.speed * 60 + fig.phase;
+                    drawNeckerCube(fx, fy, fig.size, rot, 0.11);
+                });
+
+                if (ambientMotionEnabled) {
+                    time += 0.016;
+                }
+                requestAnimationFrame(renderFrame);
+            }
+
+            renderFrame();
+        }
+
+        els.toggleMotionBtn.addEventListener('click', () => {
+            ambientMotionEnabled = !ambientMotionEnabled;
+            document.body.classList.toggle('motion-paused', !ambientMotionEnabled);
+            els.motionLabel.textContent = ambientMotionEnabled ? 'MOTION: ON' : 'MOTION: PAUSED';
+            els.motionIcon.setAttribute('data-lucide', ambientMotionEnabled ? 'pause' : 'play');
+            lucide.createIcons({ root: els.toggleMotionBtn });
+        });
+
+        // =========================================================================
+        // 7. 100-POINT VIVIDNESS CALCULATOR WITH N/A TOGGLES & PRO-RATING
+        // =========================================================================
+        function initVividnessCalculator() {
+            VIVIDNESS_METRICS.forEach(m => {
+                vividnessValues[m.id] = m.defaultVal;
+                vividnessNA[m.id] = false;
+            });
+            renderVividnessSliders();
+            recalculateVividness();
+        }
+
+        function renderVividnessSliders() {
+            els.sensesSlidersContainer.innerHTML = '';
+            els.cognitiveSlidersContainer.innerHTML = '';
+
+            VIVIDNESS_METRICS.forEach(metric => {
+                const isNA = Boolean(vividnessNA[metric.id]);
+                const val = Number(vividnessValues[metric.id] ?? 0);
+
+                const row = document.createElement('div');
+                row.className = `p-2.5 rounded-lg border transition ${
+                    isNA
+                        ? 'bg-obsidian/40 border-chalk/10 opacity-75'
+                        : 'bg-charcoal/60 border-chalk/15'
+                }`;
+
+                row.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-1.5">
+                        <span class="font-mono text-[11px] font-medium ${isNA ? 'line-through text-parchment/50' : 'text-chalk'} truncate">
+                            ${metric.label}
+                        </span>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span id="val-readout-${metric.id}" class="font-mono text-[11px] font-semibold ${isNA ? 'text-amber-300/80' : 'text-parchment'}">
+                                ${isNA ? 'N/A' : `${val} / ${metric.max}`}
+                            </span>
+                            <button type="button" id="na-btn-${metric.id}"
+                                class="px-2 py-0.5 rounded font-mono text-[10px] uppercase border transition ${
+                                    isNA
+                                        ? 'bg-amber-500/20 text-amber-200 border-amber-400/60 font-bold'
+                                        : 'bg-obsidian text-parchment/75 border-chalk/20 hover:border-chalk/50 hover:text-chalk'
+                                }">
+                                ${isNA ? 'N/A ✓' : 'N/A'}
+                            </button>
+                        </div>
+                    </div>
+                    <input type="range" id="slider-${metric.id}"
+                        min="0" max="${metric.max}" step="${metric.step}" value="${val}"
+                        ${isNA ? 'disabled' : ''}
+                        class="escher-slider">
+                `;
+
+                const slider = row.querySelector(`#slider-${metric.id}`);
+                const naBtn = row.querySelector(`#na-btn-${metric.id}`);
+
+                slider.addEventListener('input', (e) => {
+                    vividnessValues[metric.id] = Number(e.target.value);
+                    document.getElementById(`val-readout-${metric.id}`).textContent = `${vividnessValues[metric.id]} / ${metric.max}`;
+                    recalculateVividness();
+                });
+
+                naBtn.addEventListener('click', () => {
+                    vividnessNA[metric.id] = !vividnessNA[metric.id];
+                    renderVividnessSliders();
+                    recalculateVividness();
+                });
+
+                if (metric.group === 'senses') {
+                    els.sensesSlidersContainer.appendChild(row);
+                } else {
+                    els.cognitiveSlidersContainer.appendChild(row);
+                }
+            });
+        }
+
+        function getVividnessTier(score) {
+            if (score === null || score === undefined) {
+                return { label: 'ALL METRICS MARKED N/A', color: '#94a3b8' };
+            }
+            if (score >= 90) return { label: 'HYPER-LUCID / INDISTINGUISHABLE', color: '#34d399' };
+            if (score >= 75) return { label: 'HIGH-FIDELITY PROJECTION', color: '#38bdf8' };
+            if (score >= 50) return { label: 'CLEAR ARCHITECTURE', color: '#ebe8e0' };
+            if (score >= 25) return { label: 'HAZY / FRAGMENTED', color: '#fbbf24' };
+            return { label: 'FAINT / SUBTLE RECALL', color: '#94a3b8' };
+        }
+
+        function recalculateVividness() {
+            let sensesRaw = 0;
+            let sensesMax = 0;
+            let cognitiveRaw = 0;
+            let cognitiveMax = 0;
+
+            VIVIDNESS_METRICS.forEach(m => {
+                const isNA = Boolean(vividnessNA[m.id]);
+                const val = Number(vividnessValues[m.id]) || 0;
+                if (m.group === 'senses') {
+                    if (!isNA) {
+                        sensesRaw += val;
+                        sensesMax += m.max;
+                    }
+                } else {
+                    if (!isNA) {
+                        cognitiveRaw += val;
+                        cognitiveMax += m.max;
+                    }
+                }
+            });
+
+            const totalRaw = sensesRaw + cognitiveRaw;
+            const totalApplicableMax = sensesMax + cognitiveMax;
+
+            // Normalize pro-rated score to a 0-100 scale; null if every single metric is N/A
+            const normalizedScore = totalApplicableMax > 0
+                ? Math.min(100, Math.round((totalRaw / totalApplicableMax) * 100))
+                : null;
+
+            els.sensesSubtotal.textContent = sensesMax > 0
+                ? `${Number(sensesRaw.toFixed(1))} / ${Number(sensesMax.toFixed(1))} PTS`
+                : 'ALL N/A';
+
+            els.cognitiveSubtotal.textContent = cognitiveMax > 0
+                ? `${Number(cognitiveRaw.toFixed(1))} / ${Number(cognitiveMax.toFixed(1))} PTS`
+                : 'ALL N/A';
+
+            const tier = getVividnessTier(normalizedScore);
+            els.vividnessTierLabel.textContent = `TIER: ${tier.label}`;
+            els.vividnessTierLabel.style.color = tier.color;
+
+            if (normalizedScore === null) {
+                els.vividnessTotalNum.textContent = '—';
+                els.vividnessFormulaNote.textContent = '0 / 100 applicable pts • All sliders marked N/A';
+                els.vividnessRing.style.strokeDashoffset = 150.8;
+                els.vividnessRing.style.stroke = '#94a3b8';
+            } else {
+                els.vividnessTotalNum.textContent = normalizedScore;
+                els.vividnessFormulaNote.textContent = `Raw: ${Number(totalRaw.toFixed(1))} / ${Number(totalApplicableMax.toFixed(1))} applicable pts → Normalized: ${normalizedScore}/100`;
+                const circumference = 150.8;
+                const offset = circumference - (normalizedScore / 100) * circumference;
+                els.vividnessRing.style.strokeDashoffset = offset;
+                els.vividnessRing.style.stroke = tier.color;
+            }
+
+            return {
+                normalizedScore,
+                totalRaw: Number(totalRaw.toFixed(1)),
+                totalApplicableMax: Number(totalApplicableMax.toFixed(1))
+            };
+        }
+
+        // =========================================================================
+        // 8. MULTI-EMOTION SELECTION
+        // =========================================================================
+        function renderEmotionPills() {
+            els.emotionPillsContainer.innerHTML = '';
+            els.selectedEmotionsCount.textContent = `${selectedEmotions.length} SELECTED`;
+
+            availableEmotions.forEach(emotion => {
+                const isSelected = selectedEmotions.includes(emotion);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = isSelected
+                    ? 'px-2.5 py-1 rounded-md text-xs font-medium bg-chalk text-obsidian border border-chalk shadow transition flex items-center gap-1'
+                    : 'px-2.5 py-1 rounded-md text-xs font-medium bg-charcoal text-parchment/80 border border-chalk/15 hover:border-chalk/40 hover:text-chalk transition';
+                btn.innerHTML = isSelected
+                    ? `<span>${escapeHtml(emotion)}</span><i data-lucide="check" class="w-3 h-3"></i>`
+                    : `<span>${escapeHtml(emotion)}</span>`;
+
+                btn.onclick = () => {
+                    if (isSelected) {
+                        selectedEmotions = selectedEmotions.filter(e => e !== emotion);
+                    } else {
+                        selectedEmotions.push(emotion);
+                    }
+                    renderEmotionPills();
+                };
+                els.emotionPillsContainer.appendChild(btn);
+            });
+            lucide.createIcons({ root: els.emotionPillsContainer });
+        }
+
+        function addCustomEmotion() {
+            const raw = els.customEmotionInput.value.trim();
+            if (!raw) return;
+            const existing = availableEmotions.find(e => e.toLowerCase() === raw.toLowerCase());
+            const finalEmotion = existing || raw;
+            if (!existing) {
+                availableEmotions.push(finalEmotion);
+            }
+            if (!selectedEmotions.includes(finalEmotion)) {
+                selectedEmotions.push(finalEmotion);
+            }
+            els.customEmotionInput.value = '';
+            renderEmotionPills();
+        }
+
+        els.addCustomEmotionBtn.addEventListener('click', addCustomEmotion);
+        els.customEmotionInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomEmotion();
+            }
+        });
+
+        // =========================================================================
+        // 9. 64 COLOR-CODED CATEGORIZED DREAM SIGN TAGS
+        // =========================================================================
+        function renderTagCategoryTabs() {
+            els.tagCategoryTabs.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.type = 'button';
+            allBtn.className = activeTagCategoryTab === 'ALL'
+                ? 'px-2.5 py-1 rounded font-mono text-[10px] uppercase bg-chalk text-obsidian font-bold transition'
+                : 'px-2.5 py-1 rounded font-mono text-[10px] uppercase bg-charcoal text-parchment border border-chalk/15 hover:border-chalk/40 transition';
+            allBtn.textContent = 'ALL (64)';
+            allBtn.onclick = () => {
+                activeTagCategoryTab = 'ALL';
+                renderTagCategoryTabs();
+                renderTagLibraryGrid();
+            };
+            els.tagCategoryTabs.appendChild(allBtn);
+
+            TAG_CATEGORIES.forEach(cat => {
+                const isActive = activeTagCategoryTab === cat.id;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'px-2.5 py-1 rounded font-mono text-[10px] uppercase transition flex items-center gap-1.5 border';
+                btn.style.backgroundColor = isActive ? cat.badgeBg : 'rgba(18, 22, 29, 0.9)';
+                btn.style.borderColor = isActive ? cat.hex : 'rgba(235, 232, 224, 0.14)';
+                btn.style.color = isActive ? cat.badgeText : '#c8c1b0';
+                btn.innerHTML = `<span class="w-2 h-2 rounded-full" style="background:${cat.hex}"></span><span>${cat.shortName}</span>`;
+                btn.onclick = () => {
+                    activeTagCategoryTab = cat.id;
+                    renderTagCategoryTabs();
+                    renderTagLibraryGrid();
+                };
+                els.tagCategoryTabs.appendChild(btn);
+            });
+        }
+
+        function renderTagLibraryGrid() {
+            const filterText = els.tagLibrarySearch.value.trim().toLowerCase();
+            els.tagLibraryGrid.innerHTML = '';
+
+            const categoriesToShow = activeTagCategoryTab === 'ALL'
+                ? TAG_CATEGORIES
+                : TAG_CATEGORIES.filter(c => c.id === activeTagCategoryTab);
+
+            let matchCount = 0;
+
+            categoriesToShow.forEach(cat => {
+                cat.tags.forEach(tag => {
+                    if (filterText && !tag.toLowerCase().includes(filterText) && !cat.name.toLowerCase().includes(filterText)) {
+                        return;
+                    }
+                    matchCount++;
+                    const isSelected = selectedTags.some(t => t.toLowerCase() === tag.toLowerCase());
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'px-2.5 py-1 rounded text-[11px] font-medium border transition flex items-center gap-1.5';
+                    btn.style.backgroundColor = isSelected ? cat.hex : cat.badgeBg;
+                    btn.style.borderColor = isSelected ? cat.hex : cat.badgeBorder;
+                    btn.style.color = isSelected ? '#0a0c10' : cat.badgeText;
+                    if (isSelected) btn.style.fontWeight = '600';
+
+                    btn.textContent = tag;
+                    btn.onclick = () => toggleTagSelection(tag);
+                    els.tagLibraryGrid.appendChild(btn);
+                });
+            });
+
+            if (matchCount === 0) {
+                els.tagLibraryGrid.innerHTML = `<span class="font-mono text-[11px] text-parchment/50 py-2">No matching tags. Click "+ TAG" to add "${escapeHtml(filterText)}".</span>`;
+            }
+        }
+
+        function toggleTagSelection(tag) {
+            const idx = selectedTags.findIndex(t => t.toLowerCase() === tag.toLowerCase());
+            if (idx !== -1) {
+                selectedTags.splice(idx, 1);
+            } else {
+                selectedTags.push(tag);
+            }
+            renderActiveSelectedTags();
+            renderTagLibraryGrid();
+        }
+
+        function addCustomTag() {
+            const raw = els.customTagInput.value.trim();
+            if (!raw) return;
+            const exists = selectedTags.some(t => t.toLowerCase() === raw.toLowerCase());
+            if (!exists) {
+                selectedTags.push(raw);
+                renderActiveSelectedTags();
+                renderTagLibraryGrid();
+            }
+            els.customTagInput.value = '';
+        }
+
+        function renderActiveSelectedTags() {
+            els.selectedTagsCount.textContent = `${selectedTags.length} TAGGED`;
+            els.activeTagsList.innerHTML = '';
+
+            if (selectedTags.length === 0) {
+                els.activeTagsList.innerHTML = `<span class="font-mono text-[11px] text-parchment/45">Click color-coded tags below or type a custom tag...</span>`;
+                return;
+            }
+
+            selectedTags.forEach(tag => {
+                const cat = getTagCategory(tag);
+                const pill = document.createElement('span');
+                pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-medium border';
+                pill.style.backgroundColor = cat.badgeBg;
+                pill.style.borderColor = cat.badgeBorder;
+                pill.style.color = cat.badgeText;
+                pill.innerHTML = `
+                    <span class="w-1.5 h-1.5 rounded-full" style="background:${cat.hex}"></span>
+                    <span>${escapeHtml(tag)}</span>
+                    <button type="button" class="hover:text-white ml-0.5" title="Remove">
+                        <i data-lucide="x" class="w-3 h-3"></i>
+                    </button>
+                `;
+                pill.querySelector('button').onclick = () => toggleTagSelection(tag);
+                els.activeTagsList.appendChild(pill);
+            });
+            lucide.createIcons({ root: els.activeTagsList });
+        }
+
+        els.tagLibrarySearch.addEventListener('input', renderTagLibraryGrid);
+        els.addCustomTagBtn.addEventListener('click', addCustomTag);
+        els.customTagInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomTag();
+            }
+        });
+
+        // =========================================================================
+        // 10. TOASTS, CONFIRMATION MODAL & DATE HELPERS
+        // =========================================================================
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const styles = {
+                success: 'bg-emerald-950/95 border-emerald-500/50 text-emerald-200',
+                error: 'bg-rose-950/95 border-rose-500/50 text-rose-200',
+                info: 'bg-charcoal/95 border-chalk/30 text-chalk'
+            };
+            const icons = {
+                success: 'check-circle-2',
+                error: 'alert-circle',
+                info: 'compass'
+            };
+
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-lg border shadow-2xl backdrop-blur-md font-mono text-xs transition-all duration-300 translate-y-2 opacity-0 ${styles[type] || styles.info}`;
+            toast.innerHTML = `<i data-lucide="${icons[type] || 'compass'}" class="w-4 h-4 shrink-0"></i><span>${message}</span>`;
+            els.toastContainer.appendChild(toast);
+            lucide.createIcons({ root: toast });
+
+            requestAnimationFrame(() => toast.classList.remove('translate-y-2', 'opacity-0'));
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3400);
+        }
+
+        function askConfirmation() {
+            return new Promise((resolve) => {
+                els.confirmModal.classList.remove('hidden');
+                els.confirmModal.classList.add('flex');
+                const cleanup = (res) => {
+                    els.confirmModal.classList.add('hidden');
+                    els.confirmModal.classList.remove('flex');
+                    els.confirmOkBtn.onclick = null;
+                    els.confirmCancelBtn.onclick = null;
+                    resolve(res);
+                };
+                els.confirmOkBtn.onclick = () => cleanup(true);
+                els.confirmCancelBtn.onclick = () => cleanup(false);
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function setDefaultDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            els.dreamDate.value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        // =========================================================================
+        // 11. FIREBASE INITIALIZATION & AUTHENTICATION
+        // =========================================================================
+        function initApp() {
+            initEscherCanvas();
+            setDefaultDate();
+            initVividnessCalculator();
+            renderEmotionPills();
+            renderTagCategoryTabs();
+            renderTagLibraryGrid();
+            populateCategoryFilterDropdown();
+            lucide.createIcons();
+
+            try {
+                app = initializeApp(activeFirebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    signInWithCustomToken(auth, __initial_auth_token).catch(err => {
+                        console.warn("Custom token sign-in skipped:", err);
+                    });
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        isDemoMode = false;
+                        currentUser = user;
+                        clearDiagnosticError();
+                        enterMainApp();
+                        subscribeToUserDreams(user.uid);
+                    } else if (!isDemoMode) {
+                        showAuthView();
+                    }
+                });
+            } catch (err) {
+                console.error("Firebase init failed:", err);
+                showDiagnosticError("Firebase SDK failed to initialize: " + err.message);
+                activateDemoMode();
+            }
+        }
+
+        function showAuthView() {
+            if (unsubscribeDreams) {
+                unsubscribeDreams();
+                unsubscribeDreams = null;
+            }
+            els.appView.classList.add('hidden');
+            els.authView.classList.remove('hidden');
+        }
+
+        function enterMainApp() {
+            els.authView.classList.add('hidden');
+            els.appView.classList.remove('hidden');
+
+            if (isDemoMode) {
+                setSyncStatus('demo', 'DEMO MODE');
+                els.userDisplayEmail.textContent = "demo@surreality.app";
+                els.saveDreamText.textContent = els.dreamId.value ? "UPDATE DEMO ENTRY" : "SAVE TO DEMO MODE";
+            } else {
+                setSyncStatus('synced', 'SYNCED TO CLOUD');
+                els.userDisplayEmail.textContent = currentUser?.email || "cloud-user";
+                els.saveDreamText.textContent = els.dreamId.value ? "UPDATE IN CLOUD" : "SAVE DREAM TO CLOUD";
+            }
+            lucide.createIcons();
+        }
+
+        function activateDemoMode() {
+            if (unsubscribeDreams) {
+                unsubscribeDreams();
+                unsubscribeDreams = null;
+            }
+            isDemoMode = true;
+            currentUser = { uid: 'demo-user', email: 'demo@surreality.app' };
+            if (allDreams.length === 0) {
+                allDreams = [...DEMO_DREAMS];
+            }
+            enterMainApp();
+            refreshUI();
+            showToast("Entered Interactive Demo Mode. Use Export JSON anytime to save a file.", "info");
+        }
+
+        els.authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            els.authError.classList.add('hidden');
+            const email = els.authEmail.value.trim();
+            const password = els.authPassword.value;
+
+            try {
+                if (isSignUpMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showToast("Account registered and connected to Firestore.", "success");
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showToast("Signed in to Firestore cloud.", "success");
+                }
+            } catch (err) {
+                els.authError.textContent = formatAuthError(err.code || err.message);
+                els.authError.classList.remove('hidden');
+            }
+        });
+
+        els.googleSigninBtn.addEventListener('click', async () => {
+            els.authError.classList.add('hidden');
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
+                showToast("Signed in with Google.", "success");
+            } catch (err) {
+                els.authError.textContent = formatAuthError(err.code || err.message);
+                els.authError.classList.remove('hidden');
+            }
+        });
+
+        function formatAuthError(code) {
+            if (code.includes('auth/invalid-credential') || code.includes('auth/wrong-password') || code.includes('auth/user-not-found')) {
+                return "Invalid email or password. Try again or switch to Register.";
+            }
+            if (code.includes('auth/email-already-in-use')) {
+                return "An account with this email already exists. Switch to Sign In.";
+            }
+            if (code.includes('auth/weak-password')) {
+                return "Password should be at least 6 characters.";
+            }
+            if (code.includes('auth/operation-not-allowed')) {
+                return "Enable this sign-in method in Firebase Console -> Security -> Authentication.";
+            }
+            if (code.includes('auth/unauthorized-domain')) {
+                return "Add this website's domain to Firebase Console -> Authentication -> Settings -> Authorized domains.";
+            }
+            return code;
+        }
+
+        els.tabSignin.addEventListener('click', () => {
+            isSignUpMode = false;
+            els.tabSignin.className = "py-2 rounded bg-chalk text-obsidian font-semibold transition";
+            els.tabSignup.className = "py-2 rounded text-parchment hover:text-white transition";
+            els.authSubmitText.textContent = "Enter Cloud Journal";
+            els.authError.classList.add('hidden');
+        });
+
+        els.tabSignup.addEventListener('click', () => {
+            isSignUpMode = true;
+            els.tabSignup.className = "py-2 rounded bg-chalk text-obsidian font-semibold transition";
+            els.tabSignin.className = "py-2 rounded text-parchment hover:text-white transition";
+            els.authSubmitText.textContent = "Create Cloud Account";
+            els.authError.classList.add('hidden');
+        });
+
+        els.signoutBtn.addEventListener('click', async () => {
+            if (isDemoMode) {
+                isDemoMode = false;
+                currentUser = null;
+                showAuthView();
+                showToast("Exited Demo Mode.", "info");
+                return;
+            }
+            if (auth) {
+                await signOut(auth);
+                showToast("Signed out.", "info");
+            }
+        });
+
+        els.demoModeAuthBtn.addEventListener('click', activateDemoMode);
+
+        // =========================================================================
+        // 12. CLOUD FIRESTORE CRUD (users/{uid}/dreams) & REAL-TIME LISTENER
+        // =========================================================================
+        function getUserDreamsCollection(uid) {
+            if (hasEnvFirebase) {
+                return collection(db, 'artifacts', appId, 'users', uid, 'dreams');
+            }
+            return collection(db, 'users', uid, 'dreams');
+        }
+
+        function subscribeToUserDreams(uid) {
+            if (!db || !uid) return;
+            els.dreamsLoading.classList.remove('hidden');
+            els.dreamsEmpty.classList.add('hidden');
+
+            const dreamsRef = getUserDreamsCollection(uid);
+
+            unsubscribeDreams = onSnapshot(dreamsRef, (snapshot) => {
+                els.dreamsLoading.classList.add('hidden');
+                clearDiagnosticError();
+                setSyncStatus('synced', 'SYNCED TO CLOUD');
+
+                const fetched = [];
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const emotions = Array.isArray(data.emotions)
+                        ? data.emotions
+                        : (data.mood ? [data.mood] : []);
+
+                    // Normalize vividness score (handles both new N/A-aware and legacy entries)
+                    let vividnessScore = null;
+                    if (data.vividnessScore === null) {
+                        vividnessScore = null;
+                    } else if (typeof data.vividnessScore === 'number') {
+                        vividnessScore = data.vividnessScore;
+                    } else if (typeof data.vividness === 'number') {
+                        vividnessScore = data.vividness * 20;
+                    } else {
+                        vividnessScore = 50;
+                    }
+
+                    fetched.push({
+                        id: docSnap.id,
+                        date: data.date || '',
+                        title: data.title || 'Untitled Dream',
+                        setting: data.setting || '',
+                        emotions,
+                        lucid: Boolean(data.lucid),
+                        vividnessScore,
+                        vividnessRawPoints: data.vividnessRawPoints ?? null,
+                        vividnessApplicableMax: data.vividnessApplicableMax ?? 100,
+                        vividnessValues: data.vividnessValues || data.vividnessBreakdown || null,
+                        vividnessNA: data.vividnessNA || {},
+                        narrative: data.narrative || '',
+                        tags: Array.isArray(data.tags) ? data.tags : [],
+                        createdAtMs: data.createdAt?.toMillis ? data.createdAt.toMillis() : (data.createdAtMs || 0)
+                    });
+                });
+
+                fetched.sort((a, b) => {
+                    if (b.date !== a.date) return b.date.localeCompare(a.date);
+                    return b.createdAtMs - a.createdAtMs;
+                });
+
+                allDreams = fetched;
+                refreshUI();
+            }, (error) => {
+                els.dreamsLoading.classList.add('hidden');
+                console.error("Firestore snapshot error:", error);
+                showDiagnosticError(`Firestore read failed (${error.code || 'error'}): ${error.message}`);
+            });
+        }
+
+        els.dreamForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const editId = els.dreamId.value;
+            const calc = recalculateVividness();
+
+            const dreamPayload = {
+                date: els.dreamDate.value,
+                title: els.dreamTitle.value.trim(),
+                setting: els.dreamSetting.value.trim(),
+                emotions: [...selectedEmotions],
+                lucid: els.dreamLucid.checked,
+                vividnessScore: calc.normalizedScore,
+                vividnessRawPoints: calc.totalRaw,
+                vividnessApplicableMax: calc.totalApplicableMax,
+                vividnessValues: { ...vividnessValues },
+                vividnessNA: { ...vividnessNA },
+                narrative: els.dreamNarrative.value.trim(),
+                tags: [...selectedTags],
+                updatedAtMs: Date.now()
+            };
+
+            if (!dreamPayload.title || !dreamPayload.narrative) {
+                showToast("Please enter both a dream title and narrative.", "error");
+                return;
+            }
+
+            if (isDemoMode) {
+                if (editId) {
+                    const idx = allDreams.findIndex(d => d.id === editId);
+                    if (idx !== -1) allDreams[idx] = { ...allDreams[idx], ...dreamPayload };
+                    showToast("Updated dream in Demo Mode.", "success");
+                } else {
+                    allDreams.unshift({
+                        id: 'demo-' + Date.now(),
+                        ...dreamPayload,
+                        createdAtMs: Date.now()
+                    });
+                    showToast("Saved dream to Demo Mode.", "success");
+                }
+                resetDreamForm();
+                refreshUI();
+                return;
+            }
+
+            if (!currentUser || !db) {
+                showDiagnosticError("Not signed in to Firebase Auth. Please sign in or use Demo Mode.");
+                return;
+            }
+
+            els.saveDreamBtn.disabled = true;
+            setSyncStatus('saving', 'SAVING TO CLOUD...');
+
+            try {
+                const dreamsRef = getUserDreamsCollection(currentUser.uid);
+                if (editId) {
+                    await updateDoc(doc(dreamsRef, editId), dreamPayload);
+                    showToast("Dream updated in Firestore cloud!", "success");
+                } else {
+                    await addDoc(dreamsRef, {
+                        ...dreamPayload,
+                        createdAt: serverTimestamp(),
+                        createdAtMs: Date.now()
+                    });
+                    showToast("Dream saved to Firestore cloud!", "success");
+                }
+                clearDiagnosticError();
+                setSyncStatus('synced', 'SYNCED TO CLOUD');
+                resetDreamForm();
+            } catch (err) {
+                console.error("Firestore write error:", err);
+                showDiagnosticError(`Firestore write failed (${err.code || 'error'}): ${err.message}`);
+                showToast("Could not save to cloud. See diagnostic alert above.", "error");
+            } finally {
+                els.saveDreamBtn.disabled = false;
+            }
+        });
+
+        function startEditingDream(dream) {
+            els.dreamId.value = dream.id;
+            els.dreamDate.value = dream.date;
+            els.dreamTitle.value = dream.title;
+            els.dreamSetting.value = dream.setting;
+            els.dreamLucid.checked = dream.lucid;
+            els.dreamNarrative.value = dream.narrative;
+
+            // Restore slider values and N/A flags
+            VIVIDNESS_METRICS.forEach(m => {
+                vividnessNA[m.id] = Boolean(dream.vividnessNA?.[m.id]);
+                if (dream.vividnessValues && typeof dream.vividnessValues[m.id] === 'number') {
+                    vividnessValues[m.id] = dream.vividnessValues[m.id];
+                } else {
+                    vividnessValues[m.id] = m.defaultVal;
+                }
+            });
+            renderVividnessSliders();
+            recalculateVividness();
+
+            // Restore emotions
+            selectedEmotions = [...(dream.emotions || [])];
+            selectedEmotions.forEach(em => {
+                if (!availableEmotions.includes(em)) availableEmotions.push(em);
+            });
+            renderEmotionPills();
+
+            // Restore tags
+            selectedTags = [...(dream.tags || [])];
+            renderActiveSelectedTags();
+            renderTagLibraryGrid();
+
+            els.formHeading.textContent = "Edit Dream Blueprint";
+            els.saveDreamText.textContent = isDemoMode ? "UPDATE DEMO ENTRY" : "UPDATE IN CLOUD";
+            els.cancelEditBtn.classList.remove('hidden');
+
+            els.dreamForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetDreamForm() {
+            els.dreamId.value = '';
+            setDefaultDate();
+            els.dreamTitle.value = '';
+            els.dreamSetting.value = '';
+            els.dreamLucid.checked = false;
+            els.dreamNarrative.value = '';
+
+            initVividnessCalculator();
+            selectedEmotions = [];
+            renderEmotionPills();
+
+            selectedTags = [];
+            renderActiveSelectedTags();
+            renderTagLibraryGrid();
+
+            els.formHeading.textContent = "New Dream Blueprint";
+            els.saveDreamText.textContent = isDemoMode ? "SAVE TO DEMO MODE" : "SAVE DREAM TO CLOUD";
+            els.cancelEditBtn.classList.add('hidden');
+        }
+
+        async function handleDeleteDream(dreamId) {
+            const confirmed = await askConfirmation();
+            if (!confirmed) return;
+
+            if (isDemoMode) {
+                allDreams = allDreams.filter(d => d.id !== dreamId);
+                refreshUI();
+                showToast("Deleted dream from Demo Mode.", "info");
+                return;
+            }
+
+            if (!currentUser || !db) return;
+            setSyncStatus('saving', 'DELETING...');
+            try {
+                const dreamsRef = getUserDreamsCollection(currentUser.uid);
+                await deleteDoc(doc(dreamsRef, dreamId));
+                setSyncStatus('synced', 'SYNCED TO CLOUD');
+                showToast("Deleted dream from Firestore cloud.", "info");
+            } catch (err) {
+                console.error("Delete error:", err);
+                showDiagnosticError(`Firestore delete failed (${err.code || 'error'}): ${err.message}`);
+                showToast("Delete failed.", "error");
+            }
+        }
+
+        // =========================================================================
+        // 13. STATS, FILTERS & DREAM ARCHIVE RENDERING
+        // =========================================================================
+        function populateCategoryFilterDropdown() {
+            els.filterCategorySelect.innerHTML = '<option value="ALL">ALL CATEGORIES</option>';
+            TAG_CATEGORIES.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.id;
+                opt.textContent = cat.shortName.toUpperCase();
+                els.filterCategorySelect.appendChild(opt);
+            });
+        }
+
+        function refreshUI() {
+            updateStats();
+            populateDynamicFilterDropdowns();
+            renderDreamList();
+        }
+
+        function updateStats() {
+            const total = allDreams.length;
+            els.statTotal.textContent = total;
+
+            if (total === 0) {
+                els.statAvgVivid.textContent = '—';
+                els.statAvgVividUnit.textContent = '/100';
+                els.statLucidPct.textContent = '0%';
+                els.statLucidCount.textContent = '(0)';
+                els.statEmotion.textContent = '—';
+                els.statTag.textContent = '—';
+                return;
+            }
+
+            const validScores = allDreams
+                .map(d => d.vividnessScore)
+                .filter(s => typeof s === 'number' && !Number.isNaN(s));
+
+            if (validScores.length > 0) {
+                const avg = Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length);
+                els.statAvgVivid.textContent = avg;
+                els.statAvgVividUnit.textContent = '/100';
+            } else {
+                els.statAvgVivid.textContent = 'N/A';
+                els.statAvgVividUnit.textContent = '';
+            }
+
+            const lucidCount = allDreams.filter(d => d.lucid).length;
+            const lucidPct = Math.round((lucidCount / total) * 100);
+            els.statLucidPct.textContent = `${lucidPct}%`;
+            els.statLucidCount.textContent = `(${lucidCount})`;
+
+            const emotionCounts = {};
+            allDreams.forEach(d => {
+                (d.emotions || []).forEach(em => {
+                    emotionCounts[em] = (emotionCounts[em] || 0) + 1;
+                });
+            });
+            const topEmotion = Object.entries(emotionCounts).sort((a, b) => b[1] - a[1])[0];
+            els.statEmotion.textContent = topEmotion ? topEmotion[0] : '—';
+
+            const tagCounts = {};
+            allDreams.forEach(d => {
+                (d.tags || []).forEach(t => {
+                    tagCounts[t] = (tagCounts[t] || 0) + 1;
+                });
+            });
+            const topTag = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0];
+            els.statTag.textContent = topTag ? topTag[0] : '—';
+        }
+
+        function populateDynamicFilterDropdowns() {
+            const prevTag = els.filterTagSelect.value;
+            const prevEmotion = els.filterEmotionSelect.value;
+
+            const usedTags = new Set();
+            const usedEmotions = new Set();
+
+            allDreams.forEach(d => {
+                (d.tags || []).forEach(t => usedTags.add(t));
+                (d.emotions || []).forEach(e => usedEmotions.add(e));
+            });
+
+            els.filterTagSelect.innerHTML = '<option value="ALL">ALL TAGS</option>';
+            Array.from(usedTags).sort((a, b) => a.localeCompare(b)).forEach(tag => {
+                const opt = document.createElement('option');
+                opt.value = tag;
+                opt.textContent = tag;
+                els.filterTagSelect.appendChild(opt);
+            });
+            if (usedTags.has(prevTag)) els.filterTagSelect.value = prevTag;
+
+            els.filterEmotionSelect.innerHTML = '<option value="ALL">ALL EMOTIONS</option>';
+            Array.from(usedEmotions).sort((a, b) => a.localeCompare(b)).forEach(em => {
+                const opt = document.createElement('option');
+                opt.value = em;
+                opt.textContent = em;
+                els.filterEmotionSelect.appendChild(opt);
+            });
+            if (usedEmotions.has(prevEmotion)) els.filterEmotionSelect.value = prevEmotion;
+        }
+
+        function getFilteredDreams() {
+            const query = els.searchInput.value.trim().toLowerCase();
+            const catFilter = els.filterCategorySelect.value;
+            const tagFilter = els.filterTagSelect.value;
+            const emotionFilter = els.filterEmotionSelect.value;
+            const minVivid = Number(els.filterVividSlider.value) || 0;
+
+            const hasActive = query !== '' || catFilter !== 'ALL' || tagFilter !== 'ALL' || emotionFilter !== 'ALL' || filterLucidOnly || minVivid > 0;
+            els.resetFiltersBtn.classList.toggle('hidden', !hasActive);
+            els.clearSearchBtn.classList.toggle('hidden', query === '');
+
+            return allDreams.filter(dream => {
+                if (filterLucidOnly && !dream.lucid) return false;
+                if (minVivid > 0 && ((dream.vividnessScore ?? -1) < minVivid)) return false;
+                if (emotionFilter !== 'ALL' && !(dream.emotions || []).includes(emotionFilter)) return false;
+                if (tagFilter !== 'ALL' && !(dream.tags || []).includes(tagFilter)) return false;
+
+                if (catFilter !== 'ALL') {
+                    const matchesCategory = (dream.tags || []).some(t => getTagCategory(t).id === catFilter);
+                    if (!matchesCategory) return false;
+                }
+
+                if (query) {
+                    const haystack = [
+                        dream.title,
+                        dream.setting,
+                        dream.narrative,
+                        ...(dream.emotions || []),
+                        ...(dream.tags || [])
+                    ].join(' ').toLowerCase();
+                    if (!haystack.includes(query)) return false;
+                }
+                return true;
+            });
+        }
+
+        function renderDreamList() {
+            const filtered = getFilteredDreams();
+            els.dreamsList.innerHTML = '';
+
+            if (filtered.length === 0) {
+                els.dreamsEmpty.classList.remove('hidden');
+                return;
+            }
+            els.dreamsEmpty.classList.add('hidden');
+
+            filtered.forEach(dream => {
+                const isExpanded = expandedCardIds.has(dream.id);
+                const isLongText = dream.narrative.length > 230;
+                const score = dream.vividnessScore;
+                const tier = getVividnessTier(score);
+                const scoreLabel = score === null || score === undefined ? 'N/A' : `${score}/100`;
+
+                const card = document.createElement('article');
+                card.className = 'escher-panel draft-corners rounded-xl p-5 hover:border-chalk/35 transition';
+
+                const emotionsHtml = (dream.emotions || []).map(em => `
+                    <button type="button" data-filter-emotion="${escapeHtml(em)}"
+                        class="emotion-pill-filter px-2 py-0.5 rounded font-mono text-[10px] uppercase tracking-wider bg-chalk/10 text-chalk hover:bg-chalk hover:text-obsidian border border-chalk/20 transition">
+                        ${escapeHtml(em)}
+                    </button>
+                `).join('');
+
+                const tagsHtml = (dream.tags || []).map(tag => {
+                    const cat = getTagCategory(tag);
+                    return `
+                        <button type="button" data-filter-tag="${escapeHtml(tag)}"
+                            style="background:${cat.badgeBg}; border-color:${cat.badgeBorder}; color:${cat.badgeText};"
+                            class="tag-pill-filter inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-medium border hover:brightness-125 transition">
+                            <span class="w-1.5 h-1.5 rounded-full" style="background:${cat.hex}"></span>
+                            <span>${escapeHtml(tag)}</span>
+                        </button>
+                    `;
+                }).join('');
+
+                // Detailed metric breakdown showing N/A badges
+                let breakdownHtml = '';
+                if (dream.vividnessValues) {
+                    const items = VIVIDNESS_METRICS.map(m => {
+                        const na = Boolean(dream.vividnessNA?.[m.id]);
+                        const v = dream.vividnessValues[m.id] ?? 0;
+                        return `<span class="${na ? 'text-amber-300/75 italic' : 'text-parchment/80'}">${m.label.split(' ')[0].toUpperCase()}:${na ? 'N/A' : v}</span>`;
+                    }).join(' &bull; ');
+
+                    breakdownHtml = `
+                        <div class="mt-3 pt-2.5 border-t border-chalk/10 font-mono text-[10px] leading-relaxed">
+                            ${items}
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                        <div class="flex flex-wrap items-center gap-2 font-mono text-[11px]">
+                            <span class="px-2.5 py-0.5 rounded bg-obsidian border border-chalk/20 text-chalk">
+                                ${escapeHtml(dream.date)}
+                            </span>
+                            ${dream.lucid ? `
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-violet-950/90 text-violet-200 border border-violet-400/40 font-semibold">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-violet-300"></i>
+                                    LUCID
+                                </span>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex items-center gap-2 px-2.5 py-1 rounded bg-obsidian border border-chalk/20 font-mono text-[11px]" title="${tier.label}">
+                            <span class="text-parchment/70">VIVIDNESS</span>
+                            <span class="font-bold" style="color:${tier.color}">${scoreLabel}</span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-display text-lg sm:text-xl font-bold text-chalk tracking-wide mb-1">
+                        ${escapeHtml(dream.title)}
+                    </h3>
+
+                    ${dream.setting ? `
+                        <p class="text-xs text-parchment/85 italic mb-2.5 flex items-center gap-1.5">
+                            <i data-lucide="compass" class="w-3.5 h-3.5 shrink-0 text-parchment"></i>
+                            <span>${escapeHtml(dream.setting)}</span>
+                        </p>
+                    ` : ''}
+
+                    ${emotionsHtml ? `
+                        <div class="flex flex-wrap gap-1.5 mb-3">
+                            ${emotionsHtml}
+                        </div>
+                    ` : ''}
+
+                    <p class="text-sm text-chalk/90 leading-relaxed whitespace-pre-line ${!isExpanded && isLongText ? 'line-clamp-3' : ''}">
+                        ${escapeHtml(dream.narrative)}
+                    </p>
+
+                    ${isLongText ? `
+                        <button type="button" class="toggle-expand-btn mt-1.5 font-mono text-[11px] text-sky-300 hover:text-sky-200 transition">
+                            ${isExpanded ? '[- COLLAPSE ENTRY]' : '[+ READ MORE]'}
+                        </button>
+                    ` : ''}
+
+                    ${isExpanded ? breakdownHtml : ''}
+
+                    <div class="mt-4 pt-3 border-t border-chalk/15 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex flex-wrap gap-1.5">
+                            ${tagsHtml || '<span class="font-mono text-[10px] text-parchment/45">NO TAGS</span>'}
+                        </div>
+
+                        <div class="flex items-center gap-1 ml-auto">
+                            <button type="button" class="copy-dream-btn p-1.5 rounded text-parchment hover:text-white hover:bg-chalk/10 transition" title="Copy entry">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                            </button>
+                            <button type="button" class="edit-dream-btn p-1.5 rounded text-parchment hover:text-sky-300 hover:bg-sky-950/50 transition" title="Edit entry">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
+                            <button type="button" class="delete-dream-btn p-1.5 rounded text-parchment hover:text-rose-400 hover:bg-rose-950/50 transition" title="Delete entry">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                const expandBtn = card.querySelector('.toggle-expand-btn');
+                if (expandBtn) {
+                    expandBtn.onclick = () => {
+                        if (expandedCardIds.has(dream.id)) expandedCardIds.delete(dream.id);
+                        else expandedCardIds.add(dream.id);
+                        renderDreamList();
+                    };
+                }
+
+                card.querySelectorAll('.tag-pill-filter').forEach(pill => {
+                    pill.onclick = () => {
+                        els.filterTagSelect.value = pill.dataset.filterTag;
+                        renderDreamList();
+                    };
+                });
+
+                card.querySelectorAll('.emotion-pill-filter').forEach(pill => {
+                    pill.onclick = () => {
+                        els.filterEmotionSelect.value = pill.dataset.filterEmotion;
+                        renderDreamList();
+                    };
+                });
+
+                card.querySelector('.copy-dream-btn').onclick = () => copyDreamToClipboard(dream);
+                card.querySelector('.edit-dream-btn').onclick = () => startEditingDream(dream);
+                card.querySelector('.delete-dream-btn').onclick = () => handleDeleteDream(dream.id);
+
+                els.dreamsList.appendChild(card);
+            });
+
+            lucide.createIcons({ root: els.dreamsList });
+        }
+
+        function copyDreamToClipboard(dream) {
+            const vStr = dream.vividnessScore === null || dream.vividnessScore === undefined ? 'N/A' : `${dream.vividnessScore}/100`;
+            const text = [
+                `Title: ${dream.title}`,
+                `Date: ${dream.date} | Vividness: ${vStr}${dream.lucid ? ' | Lucid' : ''}`,
+                dream.emotions?.length ? `Emotions: ${dream.emotions.join(', ')}` : null,
+                dream.setting ? `Setting: ${dream.setting}` : null,
+                `\n${dream.narrative}`,
+                dream.tags?.length ? `\nTags: ${dream.tags.map(t => '#' + t).join(' ')}` : null
+            ].filter(Boolean).join('\n');
+
+            const tempArea = document.createElement('textarea');
+            tempArea.value = text;
+            document.body.appendChild(tempArea);
+            tempArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Copied dream to clipboard.", "success");
+            } catch (e) {
+                showToast("Copy failed.", "error");
+            }
+            document.body.removeChild(tempArea);
+        }
+
+        // =========================================================================
+        // 14. 1-CLICK JSON & MARKDOWN EXPORT + JSON IMPORT
+        // =========================================================================
+        function triggerFileDownload(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        els.exportJsonBtn.addEventListener('click', () => {
+            els.exportDropdownMenu.classList.add('hidden');
+            if (allDreams.length === 0) {
+                showToast("No dreams to export.", "info");
+                return;
+            }
+            const dateStr = new Date().toISOString().split('T')[0];
+            const payload = {
+                exportedAt: new Date().toISOString(),
+                app: "Nocturne / Surreality",
+                projectId: firebaseConfig.projectId,
+                dreams: allDreams
+            };
+            triggerFileDownload(JSON.stringify(payload, null, 2), `surreality-dreams-${dateStr}.json`, 'application/json');
+            showToast(`Exported ${allDreams.length} dreams as JSON.`, "success");
+        });
+
+        els.exportMdBtn.addEventListener('click', () => {
+            els.exportDropdownMenu.classList.add('hidden');
+            if (allDreams.length === 0) {
+                showToast("No dreams to export.", "info");
+                return;
+            }
+            const dateStr = new Date().toISOString().split('T')[0];
+            let md = `# Surreality Dream Journal\n*Exported ${dateStr} (${allDreams.length} entries)*\n\n---\n\n`;
+
+            allDreams.forEach(d => {
+                const vStr = d.vividnessScore === null || d.vividnessScore === undefined ? 'N/A' : `${d.vividnessScore}/100`;
+                md += `## ${d.title}\n`;
+                md += `- **Date:** ${d.date} | **Vividness:** ${vStr} | **Lucid:** ${d.lucid ? 'Yes' : 'No'}\n`;
+                if (d.emotions?.length) md += `- **Emotions:** ${d.emotions.join(', ')}\n`;
+                if (d.setting) md += `- **Setting:** ${d.setting}\n`;
+                if (d.tags?.length) md += `- **Tags:** ${d.tags.map(t => `\`${t}\``).join(', ')}\n`;
+                md += `\n${d.narrative}\n\n---\n\n`;
+            });
+
+            triggerFileDownload(md, `surreality-journal-${dateStr}.md`, 'text/markdown');
+            showToast(`Exported ${allDreams.length} dreams as Markdown.`, "success");
+        });
+
+        els.importJsonBtn.addEventListener('click', () => els.importJsonInput.click());
+
+        els.importJsonInput.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const parsed = JSON.parse(text);
+                const incoming = Array.isArray(parsed) ? parsed : parsed.dreams;
+
+                if (!Array.isArray(incoming) || incoming.length === 0) {
+                    showToast("No valid dreams found in JSON file.", "error");
+                    return;
+                }
+
+                let count = 0;
+                for (const item of incoming) {
+                    if (!item.title || !item.narrative) continue;
+                    const cleanItem = {
+                        date: item.date || new Date().toISOString().split('T')[0],
+                        title: String(item.title),
+                        setting: String(item.setting || ''),
+                        emotions: Array.isArray(item.emotions) ? item.emotions.map(String) : (item.mood ? [String(item.mood)] : []),
+                        lucid: Boolean(item.lucid),
+                        vividnessScore: item.vividnessScore === null ? null : (typeof item.vividnessScore === 'number' ? item.vividnessScore : 50),
+                        vividnessRawPoints: item.vividnessRawPoints ?? null,
+                        vividnessApplicableMax: item.vividnessApplicableMax ?? 100,
+                        vividnessValues: item.vividnessValues || item.vividnessBreakdown || null,
+                        vividnessNA: item.vividnessNA || {},
+                        narrative: String(item.narrative),
+                        tags: Array.isArray(item.tags) ? item.tags.map(String) : [],
+                        createdAtMs: Number(item.createdAtMs) || Date.now()
+                    };
+
+                    if (isDemoMode) {
+                        allDreams.unshift({ id: 'imp-' + Date.now() + '-' + count, ...cleanItem });
+                        count++;
+                    } else if (currentUser && db) {
+                        const dreamsRef = getUserDreamsCollection(currentUser.uid);
+                        await addDoc(dreamsRef, {
+                            ...cleanItem,
+                            createdAt: serverTimestamp()
+                        });
+                        count++;
+                    }
+                }
+
+                if (isDemoMode) refreshUI();
+                showToast(`Imported ${count} dream entries!`, "success");
+            } catch (err) {
+                console.error("Import error:", err);
+                showToast("Failed to import JSON file.", "error");
+            } finally {
+                els.importJsonInput.value = '';
+            }
+        });
+
+        // =========================================================================
+        // 15. FILTER & DROPDOWN LISTENERS
+        // =========================================================================
+        els.cancelEditBtn.addEventListener('click', resetDreamForm);
+        els.searchInput.addEventListener('input', renderDreamList);
+        els.clearSearchBtn.addEventListener('click', () => {
+            els.searchInput.value = '';
+            renderDreamList();
+        });
+
+        els.filterCategorySelect.addEventListener('change', renderDreamList);
+        els.filterTagSelect.addEventListener('change', renderDreamList);
+        els.filterEmotionSelect.addEventListener('change', renderDreamList);
+
+        els.filterLucidBtn.addEventListener('click', () => {
+            filterLucidOnly = !filterLucidOnly;
+            els.filterLucidBtn.className = filterLucidOnly
+                ? "px-3 py-1.5 rounded-lg font-mono text-[11px] bg-violet-950 text-violet-200 border border-violet-400/50 transition flex items-center gap-1.5"
+                : "px-3 py-1.5 rounded-lg font-mono text-[11px] bg-obsidian text-parchment border border-chalk/20 hover:border-violet-400/50 transition flex items-center gap-1.5";
+            renderDreamList();
+        });
+
+        els.filterVividSlider.addEventListener('input', (e) => {
+            els.filterVividVal.textContent = e.target.value;
+            renderDreamList();
+        });
+
+        els.resetFiltersBtn.addEventListener('click', () => {
+            els.searchInput.value = '';
+            els.filterCategorySelect.value = 'ALL';
+            els.filterTagSelect.value = 'ALL';
+            els.filterEmotionSelect.value = 'ALL';
+            filterLucidOnly = false;
+            els.filterLucidBtn.className = "px-3 py-1.5 rounded-lg font-mono text-[11px] bg-obsidian text-parchment border border-chalk/20 hover:border-violet-400/50 transition flex items-center gap-1.5";
+            els.filterVividSlider.value = 0;
+            els.filterVividVal.textContent = '0';
+            renderDreamList();
+        });
+
+        els.exportDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            els.exportDropdownMenu.classList.toggle('hidden');
+        });
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('export-dropdown-wrapper').contains(e.target)) {
+                els.exportDropdownMenu.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
