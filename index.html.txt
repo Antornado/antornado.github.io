@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nocturne // Surreality — Architectural Dream Journal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-obsidian: #09090b;
+      --panel-slate: #111114;
+      --border-draft: #27272a;
+      --chalk-light: #e4e4e7;
+    }
+    body {
+      background-color: var(--bg-obsidian);
+      color: var(--chalk-light);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .font-display { font-family: 'Cinzel', serif; }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+
+    /* Escher Architectural Drafting Borders */
+    .draft-panel {
+      background: rgba(17, 17, 20, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid #27272a;
+      position: relative;
+    }
+    .draft-panel::before, .draft-panel::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: #71717a;
+      pointer-events: none;
+    }
+    .draft-panel::before {
+      top: -1px; left: -1px;
+      border-top: 1px solid #a1a1aa;
+      border-left: 1px solid #a1a1aa;
+    }
+    .draft-panel::after {
+      bottom: -1px; right: -1px;
+      border-bottom: 1px solid #a1a1aa;
+      border-right: 1px solid #a1a1aa;
+    }
+
+    /* Custom Range Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #f4f4f5;
+      border: 1px solid #09090b;
+      margin-top: -6px;
+      transform: rotate(45deg);
+      transition: transform 0.15s ease;
+    }
+    input[type="range"]:not(:disabled)::-webkit-slider-thumb:hover {
+      transform: rotate(45deg) scale(1.2);
+    }
+    input[type="range"]:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Kinetic Penrose Emblem Animation */
+    @keyframes slowSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .penrose-spin {
+      animation: slowSpin 48s linear infinite;
+    }
+    .motion-paused .penrose-spin {
+      animation-play-state: paused;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #09090b; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; }
+    ::-webkit-scrollbar-thumb:hover { background: #71717a; }
+  </style>
+</head>
+<body class="min-h-screen relative selection:bg-zinc-200 selection:text-zinc-950">
+
+  <!-- Live Isometric Escher Tessellation Canvas -->
+  <canvas id="escher-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-45"></canvas>
+
+  <!-- Cloud Diagnostic Banner -->
+  <div id="cloud-error-banner" class="hidden fixed top-0 inset-x-0 z-50 bg-red-950/95 border-b border-red-500/60 px-4 py-3 text-xs text-red-200 font-mono-code">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <span id="cloud-error-text"></span>
+      <button onclick="document.getElementById('cloud-error-banner').classList.add('hidden')" class="px-2 py-0.5 border border-red-400/50 hover:bg-red-900">DISMISS</button>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION VIEW -->
+  <div id="auth-view" class="relative z-10 min-h-screen flex items-center justify-center p-4">
+    <div class="draft-panel w-full max-w-md p-8 shadow-2xl">
+      <div class="flex flex-col items-center text-center mb-8">
+        <!-- Penrose Triangle SVG -->
+        <svg class="w-14 h-14 mb-4 text-zinc-200 penrose-spin" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polygon points="50,10 90,80 10,80" />
+          <polygon points="50,26 76,72 24,72" />
+          <line x1="50" y1="10" x2="37" y2="72" />
+          <line x1="90" y1="80" x2="50" y2="26" />
+          <line x1="10" y1="80" x2="76" y2="72" />
+        </svg>
+        <h1 class="font-display text-2xl tracking-[0.2em] uppercase text-zinc-100">Nocturne // Surreality</h1>
+        <p class="font-mono-code text-[11px] uppercase tracking-widest text-zinc-500 mt-1">Architectural Dream Archive</p>
+      </div>
+
+      <div class="flex border-b border-zinc-800 mb-6 font-mono-code text-xs">
+        <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 border-b-2 border-zinc-200 text-zinc-100 uppercase tracking-wider">Sign In</button>
+        <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2.5 border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 uppercase tracking-wider">Create Account</button>
+      </div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block font-mono-code text-[11px] uppercase tracking-widest text-zinc-400 mb-1.5">Email</label>
+          <input type="email" id="auth-email" required placeholder="architect@surreality.io" class="w-full bg-zinc-950 border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-zinc-300" />
+        </div>
+        <div>
+          <label class="block font-mono-code text-[11px] uppercase tracking-widest text-zinc-400 mb-1.5">Password</label>
+          <input type="password" id="auth-password" required minlength="6" placeholder="••••••••" class="w-full bg-zinc-950 border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-zinc-300" />
+        </div>
+        <p id="auth-error" class="hidden text-xs text-red-400 font-mono-code"></p>
+        <button type="submit" id="auth-submit-btn" class="w-full bg-zinc-100 text-zinc-950 font-mono-code text-xs font-medium uppercase tracking-widest py-3 hover:bg-white transition">
+          Enter Archive
+        </button>
+      </form>
+
+      <div class="mt-4 pt-4 border-t border-zinc-800/80 space-y-2.5">
+        <button onclick="handleGoogleSignIn()" class="w-full border border-zinc-700 bg-zinc-950/60 text-zinc-200 font-mono-code text-xs uppercase tracking-widest py-2.5 hover:border-zinc-400 transition flex items-center justify-center gap-2">
+          <span>Continue with Google</span>
+        </button>
+        <button onclick="enterDemoMode()" class="w-full text-zinc-500 hover:text-zinc-300 font-mono-code text-[11px] uppercase tracking-widest py-1.5 transition">
+          Preview Offline Demo Mode
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APPLICATION VIEW -->
+  <div id="app-view" class="hidden relative z-10 min-h-screen flex flex-col">
+    <!-- Top Header -->
+    <header class="border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <svg class="w-7 h-7 text-zinc-200 penrose-spin" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="50,10 90,80 10,80" />
+            <polygon points="50,26 76,72 24,72" />
+            <line x1="50" y1="10" x2="37" y2="72" />
+            <line x1="90" y1="80" x2="50" y2="26" />
+            <line x1="10" y1="80" x2="76" y2="72" />
+          </svg>
+          <div>
+            <h1 class="font-display text-base sm:text-lg tracking-[0.18em] uppercase text-zinc-100 leading-none">Nocturne // Surreality</h1>
+            <div class="flex items-center gap-2 mt-1">
+              <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span id="sync-status" class="font-mono-code text-[10px] uppercase tracking-widest text-zinc-400">Synced to Cloud</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 font-mono-code text-[11px]">
+          <button id="motion-toggle-btn" onclick="toggleMotion()" class="px-2.5 py-1.5 border border-zinc-700 text-zinc-300 hover:border-zinc-400 uppercase tracking-wider">
+            Motion: On
+          </button>
+          <span id="user-badge" class="hidden sm:inline-block px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-400"></span>
+          <button onclick="handleSignOut()" class="px-2.5 py-1.5 border border-zinc-700 text-zinc-300 hover:bg-zinc-800 uppercase tracking-wider">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Two-Column Grid -->
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+
+      <!-- LEFT COLUMN: ENTRY EDITOR (5 cols on lg) -->
+      <section class="lg:col-span-5 space-y-6">
+        <div class="draft-panel p-5 sm:p-6">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-3 mb-5">
+            <h2 id="form-heading" class="font-display text-sm uppercase tracking-[0.2em] text-zinc-100">Log Dream Blueprint</h2>
+            <button id="cancel-edit-btn" onclick="resetForm()" class="hidden font-mono-code text-[11px] text-amber-400 hover:underline uppercase">Cancel Edit</button>
+          </div>
+
+          <form id="dream-form" onsubmit="handleSaveDream(event)" class="space-y-5">
+            <input type="hidden" id="edit-dream-id" value="" />
+
+            <!-- Title & Date -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="dream-title" class="block font-mono-code text-[11px] uppercase tracking-widest text-zinc-400 mb-1.5">Title</label>
+                <input type="text" id="dream-title" required placeholder="e.g., The Endless Museum" class="w-full bg-zinc-950 border border-zinc-700 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-300" />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="dream-date" class="block font-mono-code text-[11px] uppercase tracking-widest text-zinc-400">Date</label>
+                  <label class="flex items-center gap-1.5 font-mono-code text-[10px] uppercase tracking-wider text-zinc-400 cursor-pointer hover:text-zinc-200">
+                    <input type="checkbox" id="dream-date-unknown" onchange="toggleUnknownDate()" class="accent-zinc-200" />
+                    <span>Date Unknown</span>
+                  </label>
+                </div>
+                <input type="date" id="dream-date" required class="w-full bg-zinc-950 border border-zinc-700 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-300" />
+                <input type="text" id="dream-approx-date" placeholder="Approx. timeframe (e.g., Summer 2025)" class="hidden w-full bg-zinc-950 border border-zinc-700 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-300" />
+              </div>
+            </div>
+
+            <!-- Narrative Description -->
+            <div>
+              <label for="dream-content" class="block font-mono-code text-[11px] uppercase tracking-widest text-zinc-400 mb-1.5">Observation & Narrative</label>
+              <textarea id="dream-content" rows="4" required placeholder="Describe the spaces, architecture, events, and details..." class="w-full bg-zinc-950 border border-zinc-700 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-300"></textarea>
+            </div>
+
+            <!-- 100-POINT SENSORY & COGNITIVE VIVIDNESS MATRIX -->
+            <div class="border border-zinc-800 bg-zinc-950/70 p-4">
+              <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5 mb-3">
+                <div>
+                  <span class="font-mono-code text-[11px] uppercase tracking-widest text-zinc-200 block">Vividness Index (0–100)</span>
+                  <span class="font-mono-code text-[10px] text-zinc-500">Pro-rated automatically when metrics are N/A</span>
+                </div>
+                <div class="text-right">
+                  <span id="vividness-total" class="font-mono-code text-2xl font-semibold text-zinc-100">50</span>
+                  <span class="font-mono-code text-xs text-zinc-500">/100</span>
+                </div>
+              </div>
+
+              <div class="space-y-3" id="vividness-sliders-container">
+                <!-- Sliders injected by JS -->
+              </div>
+            </div>
+
+            <!-- MULTI-EMOTION SPECTRUM -->
+            <div>
+              <label class="block font-mono-code text-[11px] uppercase tracking-widest text-zinc-400 mb-2">Emotional Resonance (Select Multiple)</label>
+              <div id="emotion-pills" class="flex flex-wrap gap-1.5 mb-2"></div>
+              <div class="flex gap-2">
+                <input type="text" id="custom-emotion-input" placeholder="Add custom emotion..." class="flex-1 bg-zinc-950 border border-zinc-800 px-2.5 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500" />
+                <button type="button" onclick="addCustomEmotion()" class="px-3 py-1.5 border border-zinc-700 font-mono-code text-[11px] uppercase text-zinc-300 hover:bg-zinc-800">+ Add</button>
+              </div>
+            </div>
+
+            <!-- CATEGORIZED COLOR-CODED TAGS -->
+            <div class="border border-zinc-800 bg-zinc-950/70 p-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                <label class="font-mono-code text-[11px] uppercase tracking-widest text-zinc-300">Dream Locations & Elements</label>
+                <span id="selected-tag-count" class="font-mono-code text-[10px] text-zinc-400">0 selected</span>
+              </div>
+
+              <!-- Search + Custom Tag -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                <input type="text" id="tag-search-input" oninput="renderTagPicker()" placeholder="Filter tags..." class="bg-zinc-900 border border-zinc-800 px-2.5 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500" />
+                <div class="flex gap-1.5">
+                  <input type="text" id="custom-tag-input" placeholder="New custom tag..." class="flex-1 bg-zinc-900 border border-zinc-800 px-2.5 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500" />
+                  <button type="button" onclick="addCustomTag()" class="px-2.5 py-1.5 border border-zinc-700 font-mono-code text-[10px] uppercase text-zinc-300 hover:bg-zinc-800">+ Tag</button>
+                </div>
+              </div>
+
+              <!-- Subcategory Tabs -->
+              <div id="tag-category-tabs" class="flex flex-wrap gap-1.5 pb-2.5 mb-2.5 border-b border-zinc-800"></div>
+
+              <!-- Tag Buttons -->
+              <div id="tag-picker-grid" class="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1"></div>
+            </div>
+
+            <button type="submit" id="save-dream-btn" class="w-full bg-zinc-100 text-zinc-950 font-mono-code text-xs font-semibold uppercase tracking-[0.2em] py-3.5 hover:bg-white transition">
+              Archive Dream Entry
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: ARCHIVE FEED & ANALYTICS (7 cols on lg) -->
+      <section class="lg:col-span-7 space-y-5">
+        <!-- Stats Ribbon -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="draft-panel p-4">
+            <span class="block font-mono-code text-[10px] uppercase tracking-widest text-zinc-500">Logged Dreams</span>
+            <span id="stat-total" class="font-mono-code text-xl sm:text-2xl text-zinc-100 mt-1 block">0</span>
+          </div>
+          <div class="draft-panel p-4">
+            <span class="block font-mono-code text-[10px] uppercase tracking-widest text-zinc-500">Avg Vividness</span>
+            <span id="stat-avg-vivid" class="font-mono-code text-xl sm:text-2xl text-zinc-100 mt-1 block">—</span>
+          </div>
+          <div class="draft-panel p-4">
+            <span class="block font-mono-code text-[10px] uppercase tracking-widest text-zinc-500">Top Location / Sign</span>
+            <span id="stat-top-tag" class="font-mono-code text-sm sm:text-base text-zinc-100 mt-1.5 block truncate">—</span>
+          </div>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="draft-panel p-4 flex flex-col sm:flex-row gap-3">
+          <input type="text" id="archive-search" oninput="renderDreams()" placeholder="Search titles, narratives, dates, or tags..." class="flex-1 bg-zinc-950 border border-zinc-800 px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-zinc-500" />
+          <select id="filter-category" onchange="renderDreams()" class="bg-zinc-950 border border-zinc-800 px-3 py-2 font-mono-code text-xs text-zinc-300 focus:outline-none">
+            <option value="ALL">All Categories</option>
+          </select>
+          <select id="filter-emotion" onchange="renderDreams()" class="bg-zinc-950 border border-zinc-800 px-3 py-2 font-mono-code text-xs text-zinc-300 focus:outline-none">
+            <option value="ALL">All Emotions</option>
+          </select>
+        </div>
+
+        <!-- Dream Cards List -->
+        <div id="dreams-list" class="space-y-4">
+          <div class="draft-panel p-8 text-center font-mono-code text-xs text-zinc-500">
+            Initializing archive...
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- FIREBASE + APPLICATION LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      doc,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Your Pre-Wired Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDxoUL_iluDGGN8nUye6BPO9AmnqZmoYDM",
+      authDomain: "surreality-project.firebaseapp.com",
+      projectId: "surreality-project",
+      storageBucket: "surreality-project.firebasestorage.app",
+      messagingSenderId: "861487581026",
+      appId: "1:861487581026:web:a8c42fc94c9439cfc6ce3b",
+      measurementId: "G-S347D12KG8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // State
+    let currentUser = null;
+    let isDemoMode = false;
+    let authMode = 'login';
+    let dreams = [];
+    let unsubscribeSnapshot = null;
+
+    let selectedEmotions = new Set();
+    let selectedTags = new Set();
+    let activeTagCategory = 'ALL';
+
+    // Vividness Sliders (5 Senses + 4 Structural Metrics = 100 pts max, pro-rated if N/A)
+    const VIVIDNESS_METRICS = [
+      { id: 'sight', label: 'Sight / Visual Clarity', max: 10, group: 'Sense' },
+      { id: 'sound', label: 'Sound / Auditory Detail', max: 10, group: 'Sense' },
+      { id: 'touch', label: 'Touch / Physical Texture', max: 10, group: 'Sense' },
+      { id: 'smell', label: 'Smell / Scent', max: 10, group: 'Sense' },
+      { id: 'taste', label: 'Taste / Flavor', max: 10, group: 'Sense' },
+      { id: 'spatial', label: 'Spatial & Location Detail', max: 15, group: 'Metric' },
+      { id: 'narrative', label: 'Story & Event Continuity', max: 15, group: 'Metric' },
+      { id: 'emotionDepth', label: 'Emotional Immersion', max: 10, group: 'Metric' },
+      { id: 'recall', label: 'Memory Recall Completeness', max: 10, group: 'Metric' }
+    ];
+
+    const DEFAULT_EMOTIONS = [
+      'Curious', 'Nervous', 'Hesitant', 'Calm', 'Awe / Wonder',
+      'Confused', 'Nostalgic', 'Eerie / Unsettled', 'Excited',
+      'Trapped', 'Relieved', 'Joyful', 'Dread', 'Detached'
+    ];
+
+    // Grounded, Everyday + Architectural Locations & Elements (Color-Coded)
+    const TAG_CATEGORIES = {
+      'Indoor Places': {
+        color: 'sky',
+        badgeClass: 'border-sky-500/50 bg-sky-950/40 text-sky-200',
+        activeClass: 'border-sky-400 bg-sky-500/30 text-white',
+        tags: [
+          'Home', 'Bedroom', 'Basement', 'Attic', 'Kitchen',
+          'Bathroom', 'Living Room', 'Garage', 'Hallway',
+          'Stairwell / Elevator', 'Hotel / Lobby', 'Apartment Building'
+        ]
+      },
+      'Public & Community': {
+        color: 'amber',
+        badgeClass: 'border-amber-500/50 bg-amber-950/40 text-amber-200',
+        activeClass: 'border-amber-400 bg-amber-500/30 text-white',
+        tags: [
+          'School', 'Classroom', 'Gymnasium / Locker Room', 'Museum',
+          'Library', 'Shopping Mall', 'Grocery Store', 'Restaurant / Diner',
+          'Movie Theater', 'Hospital / Clinic', 'Airport / Train Station', 'Office Building'
+        ]
+      },
+      'Outdoors & Recreation': {
+        color: 'emerald',
+        badgeClass: 'border-emerald-500/50 bg-emerald-950/40 text-emerald-200',
+        activeClass: 'border-emerald-400 bg-emerald-500/30 text-white',
+        tags: [
+          'Playground', 'Park', 'Backyard', 'Neighborhood Street',
+          'Forest / Woods', 'Beach / Ocean', 'Lake / River', 'Mountain / Hill',
+          'Pool / Waterpark', 'Amusement Park', 'Ice Rink / Ski Slope', 'Parking Lot'
+        ]
+      },
+      'Surreal & Architectural': {
+        color: 'violet',
+        badgeClass: 'border-violet-500/50 bg-violet-950/40 text-violet-200',
+        activeClass: 'border-violet-400 bg-violet-500/30 text-white',
+        tags: [
+          'Liminal Space', 'Endless Rooms', 'Impossible Stairs', 'Secret Door / Passage',
+          'Maze / Labyrinth', 'Abandoned Building', 'Underground Tunnel', 'Rooftop / High Ledge',
+          'Shifting Layout', 'Giant Scale / Tiny Scale'
+        ]
+      },
+      'People & Creatures': {
+        color: 'rose',
+        badgeClass: 'border-rose-500/50 bg-rose-950/40 text-rose-200',
+        activeClass: 'border-rose-400 bg-rose-500/30 text-white',
+        tags: [
+          'Family', 'Friends', 'Classmates / Coworkers', 'Strangers / Crowd',
+          'Childhood Acquaintance', 'Pets / Animals', 'Famous Person', 'Unseen Presence'
+        ]
+      },
+      'Events & Mechanics': {
+        color: 'teal',
+        badgeClass: 'border-teal-500/50 bg-teal-950/40 text-teal-200',
+        activeClass: 'border-teal-400 bg-teal-500/30 text-white',
+        tags: [
+          'Lucid / Aware', 'Running / Chased', 'Flying / Floating', 'Falling / Jumping',
+          'Driving / Vehicle', 'Lost / Searching', 'Late / Unprepared', 'Nighttime / Dark',
+          'Storm / Weather', 'False Awakening', 'Recurring Dream'
+        ]
+      }
+    };
+
+    // Helper: Find category info for any tag (including custom tags)
+    function getTagStyle(tagName) {
+      for (const [catName, catData] of Object.entries(TAG_CATEGORIES)) {
+        if (catData.tags.includes(tagName)) {
+          return { category: catName, ...catData };
+        }
+      }
+      return {
+        category: 'Custom',
+        badgeClass: 'border-zinc-500/60 bg-zinc-800/70 text-zinc-200',
+        activeClass: 'border-zinc-300 bg-zinc-600/50 text-white'
+      };
+    }
+
+    function showCloudError(msg) {
+      const banner = document.getElementById('cloud-error-banner');
+      document.getElementById('cloud-error-text').textContent = `FIRESTORE DIAGNOSTIC: ${msg}`;
+      banner.classList.remove('hidden');
+    }
+
+    function setSyncStatus(text, colorClass = 'bg-emerald-400') {
+      document.getElementById('sync-status').textContent = text;
+      const dot = document.getElementById('sync-dot');
+      dot.className = `w-1.5 h-1.5 rounded-full ${colorClass}`;
+    }
+
+    // Initialize UI Controls
+    function initFormControls() {
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dream-date').value = today;
+
+      // Render Vividness Sliders with N/A toggles
+      const sliderContainer = document.getElementById('vividness-sliders-container');
+      sliderContainer.innerHTML = VIVIDNESS_METRICS.map(m => `
+        <div class="text-xs">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-zinc-300">${m.label} <span class="text-zinc-600 font-mono-code text-[10px]">(${m.max}pt)</span></span>
+            <div class="flex items-center gap-2.5 font-mono-code text-[11px]">
+              <span id="val-${m.id}" class="text-zinc-200 w-9 text-right">${Math.round(m.max / 2)}/${m.max}</span>
+              <label class="flex items-center gap-1 text-[10px] text-zinc-400 cursor-pointer hover:text-zinc-200">
+                <input type="checkbox" id="na-${m.id}" onchange="toggleMetricNA('${m.id}')" class="accent-zinc-300" />
+                <span>N/A</span>
+              </label>
+            </div>
+          </div>
+          <input type="range" id="slider-${m.id}" min="0" max="${m.max}" value="${Math.round(m.max / 2)}" oninput="recalculateVividness()" class="w-full" />
+        </div>
+      `).join('');
+
+      recalculateVividness();
+      renderEmotionPills();
+      renderTagCategoryTabs();
+      renderTagPicker();
+      populateFilterDropdowns();
+    }
+
+    window.toggleMetricNA = function(id) {
+      const isNA = document.getElementById(`na-${id}`).checked;
+      const slider = document.getElementById(`slider-${id}`);
+      const valLabel = document.getElementById(`val-${id}`);
+      const metric = VIVIDNESS_METRICS.find(m => m.id === id);
+
+      slider.disabled = isNA;
+      valLabel.textContent = isNA ? 'N/A' : `${slider.value}/${metric.max}`;
+      recalculateVividness();
+    };
+
+    window.recalculateVividness = function() {
+      let earned = 0;
+      let applicableMax = 0;
+
+      VIVIDNESS_METRICS.forEach(m => {
+        const isNA = document.getElementById(`na-${m.id}`).checked;
+        const slider = document.getElementById(`slider-${m.id}`);
+        const valLabel = document.getElementById(`val-${m.id}`);
+
+        if (!isNA) {
+          const val = Number(slider.value);
+          earned += val;
+          applicableMax += m.max;
+          valLabel.textContent = `${val}/${m.max}`;
+        } else {
+          valLabel.textContent = 'N/A';
+        }
+      });
+
+      const normalizedScore = applicableMax > 0 ? Math.round((earned / applicableMax) * 100) : 0;
+      document.getElementById('vividness-total').textContent = normalizedScore;
+      return normalizedScore;
+    };
+
+    window.toggleUnknownDate = function() {
+      const isUnknown = document.getElementById('dream-date-unknown').checked;
+      const dateInput = document.getElementById('dream-date');
+      const approxInput = document.getElementById('dream-approx-date');
+
+      if (isUnknown) {
+        dateInput.classList.add('hidden');
+        dateInput.required = false;
+        approxInput.classList.remove('hidden');
+      } else {
+        dateInput.classList.remove('hidden');
+        dateInput.required = true;
+        approxInput.classList.add('hidden');
+      }
+    };
+
+    function renderEmotionPills() {
+      const allEmotions = new Set([...DEFAULT_EMOTIONS, ...selectedEmotions]);
+      const container = document.getElementById('emotion-pills');
+      container.innerHTML = Array.from(allEmotions).map(em => {
+        const active = selectedEmotions.has(em);
+        return `
+          <button type="button" onclick="toggleEmotion('${em.replace(/'/g, "\\'")}')"
+            class="px-2.5 py-1 text-xs border transition ${active ? 'border-zinc-200 bg-zinc-200 text-zinc-950 font-medium' : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-600'}">
+            ${em}
+          </button>
+        `;
+      }).join('');
+    }
+
+    window.toggleEmotion = function(em) {
+      if (selectedEmotions.has(em)) selectedEmotions.delete(em);
+      else selectedEmotions.add(em);
+      renderEmotionPills();
+    };
+
+    window.addCustomEmotion = function() {
+      const input = document.getElementById('custom-emotion-input');
+      const val = input.value.trim();
+      if (!val) return;
+      selectedEmotions.add(val);
+      input.value = '';
+      renderEmotionPills();
+    };
+
+    function renderTagCategoryTabs() {
+      const container = document.getElementById('tag-category-tabs');
+      const cats = ['ALL', ...Object.keys(TAG_CATEGORIES)];
+      container.innerHTML = cats.map(cat => {
+        const isActive = activeTagCategory === cat;
+        return `
+          <button type="button" onclick="setTagCategory('${cat}')"
+            class="px-2 py-1 font-mono-code text-[10px] uppercase tracking-wider border transition ${isActive ? 'border-zinc-300 bg-zinc-800 text-zinc-100' : 'border-transparent text-zinc-500 hover:text-zinc-300'}">
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    window.setTagCategory = function(cat) {
+      activeTagCategory = cat;
+      renderTagCategoryTabs();
+      renderTagPicker();
+    };
+
+    window.renderTagPicker = function() {
+      const query = document.getElementById('tag-search-input').value.trim().toLowerCase();
+      const grid = document.getElementById('tag-picker-grid');
+      document.getElementById('selected-tag-count').textContent = `${selectedTags.size} selected`;
+
+      let candidateTags = [];
+      if (activeTagCategory === 'ALL') {
+        Object.values(TAG_CATEGORIES).forEach(c => candidateTags.push(...c.tags));
+        // Include any custom selected tags not in predefined lists
+        selectedTags.forEach(t => {
+          if (!candidateTags.includes(t)) candidateTags.push(t);
+        });
+      } else {
+        candidateTags = [...TAG_CATEGORIES[activeTagCategory].tags];
+      }
+
+      if (query) {
+        candidateTags = candidateTags.filter(t => t.toLowerCase().includes(query));
+      }
+
+      grid.innerHTML = candidateTags.map(tag => {
+        const isSelected = selectedTags.has(tag);
+        const style = getTagStyle(tag);
+        return `
+          <button type="button" onclick="toggleTag('${tag.replace(/'/g, "\\'")}')"
+            class="px-2.5 py-1 text-[11px] border transition ${isSelected ? style.activeClass : style.badgeClass + ' opacity-80 hover:opacity-100'}">
+            ${isSelected ? '✓ ' : ''}${tag}
+          </button>
+        `;
+      }).join('');
+    };
+
+    window.toggleTag = function(tag) {
+      if (selectedTags.has(tag)) selectedTags.delete(tag);
+      else selectedTags.add(tag);
+      renderTagPicker();
+    };
+
+    window.addCustomTag = function() {
+      const input = document.getElementById('custom-tag-input');
+      const val = input.value.trim();
+      if (!val) return;
+      selectedTags.add(val);
+      input.value = '';
+      renderTagPicker();
+    };
+
+    function populateFilterDropdowns() {
+      const catSelect = document.getElementById('filter-category');
+      Object.keys(TAG_CATEGORIES).forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        catSelect.appendChild(opt);
+      });
+
+      const emSelect = document.getElementById('filter-emotion');
+      DEFAULT_EMOTIONS.forEach(em => {
+        const opt = document.createElement('option');
+        opt.value = em;
+        opt.textContent = em;
+        emSelect.appendChild(opt);
+      });
+    }
+
+    // AUTHENTICATION HANDLERS
+    window.switchAuthTab = function(mode) {
+      authMode = mode;
+      const loginTab = document.getElementById('tab-login');
+      const regTab = document.getElementById('tab-register');
+      const btn = document.getElementById('auth-submit-btn');
+
+      if (mode === 'login') {
+        loginTab.className = 'flex-1 py-2.5 border-b-2 border-zinc-200 text-zinc-100 uppercase tracking-wider';
+        regTab.className = 'flex-1 py-2.5 border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 uppercase tracking-wider';
+        btn.textContent = 'Enter Archive';
+      } else {
+        regTab.className = 'flex-1 py-2.5 border-b-2 border-zinc-200 text-zinc-100 uppercase tracking-wider';
+        loginTab.className = 'flex-1 py-2.5 border-b-2 border-transparent text-zinc-500 hover:text-zinc-300 uppercase tracking-wider';
+        btn.textContent = 'Create Account';
+      }
+      document.getElementById('auth-error').classList.add('hidden');
+    };
+
+    window.handleAuthSubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const errEl = document.getElementById('auth-error');
+      errEl.classList.add('hidden');
+
+      try {
+        if (authMode === 'login') {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          await createUserWithEmailAndPassword(auth, email, password);
+        }
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.classList.remove('hidden');
+      }
+    };
+
+    window.handleGoogleSignIn = async function() {
+      const errEl = document.getElementById('auth-error');
+      errEl.classList.add('hidden');
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.classList.remove('hidden');
+      }
+    };
+
+    window.enterDemoMode = function() {
+      isDemoMode = true;
+      currentUser = { uid: 'demo', email: 'Offline Demo' };
+      document.getElementById('auth-view').classList.add('hidden');
+      document.getElementById('app-view').classList.remove('hidden');
+      document.getElementById('user-badge').textContent = 'OFFLINE DEMO';
+      setSyncStatus('Local Demo Mode', 'bg-amber-400');
+
+      const saved = localStorage.getItem('nocturne_demo_dreams');
+      dreams = saved ? JSON.parse(saved) : [];
+      renderDreams();
+    };
+
+    window.handleSignOut = async function() {
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+      if (isDemoMode) {
+        isDemoMode = false;
+        currentUser = null;
+        document.getElementById('app-view').classList.add('hidden');
+        document.getElementById('auth-view').classList.remove('hidden');
+        return;
+      }
+      await signOut(auth);
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        isDemoMode = false;
+        currentUser = user;
+        document.getElementById('auth-view').classList.add('hidden');
+        document.getElementById('app-view').classList.remove('hidden');
+        document.getElementById('user-badge').textContent = user.email;
+        subscribeToDreams(user.uid);
+      } else if (!isDemoMode) {
+        if (unsubscribeSnapshot) unsubscribeSnapshot();
+        currentUser = null;
+        document.getElementById('app-view').classList.add('hidden');
+        document.getElementById('auth-view').classList.remove('hidden');
+      }
+    });
+
+    function subscribeToDreams(uid) {
+      setSyncStatus('Connecting...', 'bg-amber-400');
+      const dreamsRef = collection(db, 'users', uid, 'dreams');
+
+      unsubscribeSnapshot = onSnapshot(dreamsRef, (snapshot) => {
+        dreams = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        dreams.sort((a, b) => {
+          const dateA = a.sortDate || (/^\d{4}-\d{2}-\d{2}$/.test(a.date) ? a.date : '0000-00-00');
+          const dateB = b.sortDate || (/^\d{4}-\d{2}-\d{2}$/.test(b.date) ? b.date : '0000-00-00');
+          return dateB.localeCompare(dateA);
+        });
+        setSyncStatus('Synced to Cloud', 'bg-emerald-400');
+        renderDreams();
+      }, (err) => {
+        setSyncStatus('Sync Error', 'bg-red-500');
+        showCloudError(err.message);
+      });
+    }
+
+    // SAVE / EDIT / DELETE DREAMS
+    window.handleSaveDream = async function(e) {
+      e.preventDefault();
+      const editId = document.getElementById('edit-dream-id').value;
+      const title = document.getElementById('dream-title').value.trim();
+      const content = document.getElementById('dream-content').value.trim();
+
+      const isDateUnknown = document.getElementById('dream-date-unknown').checked;
+      const approxText = document.getElementById('dream-approx-date').value.trim();
+      const dateVal = isDateUnknown
+        ? (approxText ? `Approx: ${approxText}` : 'Date Unknown')
+        : document.getElementById('dream-date').value;
+      const sortDate = isDateUnknown ? '0000-00-00' : dateVal;
+
+      const vividnessBreakdown = {};
+      VIVIDNESS_METRICS.forEach(m => {
+        const isNA = document.getElementById(`na-${m.id}`).checked;
+        vividnessBreakdown[m.id] = isNA ? null : Number(document.getElementById(`slider-${m.id}`).value);
+      });
+
+      const vividnessScore = recalculateVividness();
+
+      const payload = {
+        title,
+        date: dateVal,
+        sortDate,
+        isDateUnknown,
+        approxText,
+        content,
+        vividness: vividnessScore,
+        vividnessBreakdown,
+        emotions: Array.from(selectedEmotions),
+        tags: Array.from(selectedTags),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (isDemoMode) {
+        if (editId) {
+          const idx = dreams.findIndex(d => d.id === editId);
+          if (idx > -1) dreams[idx] = { ...dreams[idx], ...payload };
+        } else {
+          dreams.unshift({ id: 'demo_' + Date.now(), ...payload });
+        }
+        localStorage.setItem('nocturne_demo_dreams', JSON.stringify(dreams));
+        renderDreams();
+        resetForm();
+        return;
+      }
+
+      try {
+        setSyncStatus('Saving to Cloud...', 'bg-amber-400');
+        if (editId) {
+          const docRef = doc(db, 'users', currentUser.uid, 'dreams', editId);
+          await updateDoc(docRef, payload);
+        } else {
+          const colRef = collection(db, 'users', currentUser.uid, 'dreams');
+          await addDoc(colRef, { ...payload, createdAt: serverTimestamp() });
+        }
+        setSyncStatus('Synced to Cloud', 'bg-emerald-400');
+        resetForm();
+      } catch (err) {
+        setSyncStatus('Save Failed', 'bg-red-500');
+        showCloudError(err.message);
+      }
+    };
+
+    window.editDream = function(id) {
+      const dream = dreams.find(d => d.id === id);
+      if (!dream) return;
+
+      document.getElementById('edit-dream-id').value = dream.id;
+      document.getElementById('form-heading').textContent = 'Edit Dream Blueprint';
+      document.getElementById('save-dream-btn').textContent = 'Update Dream Entry';
+      document.getElementById('cancel-edit-btn').classList.remove('hidden');
+
+      document.getElementById('dream-title').value = dream.title || '';
+      document.getElementById('dream-content').value = dream.content || '';
+
+      const isExactDate = /^\d{4}-\d{2}-\d{2}$/.test(dream.date);
+      document.getElementById('dream-date-unknown').checked = !isExactDate;
+      toggleUnknownDate();
+
+      if (isExactDate) {
+        document.getElementById('dream-date').value = dream.date;
+        document.getElementById('dream-approx-date').value = '';
+      } else {
+        document.getElementById('dream-approx-date').value = dream.approxText || (dream.date !== 'Date Unknown' ? dream.date.replace(/^Approx:\s*/i, '') : '');
+      }
+
+      VIVIDNESS_METRICS.forEach(m => {
+        const val = dream.vividnessBreakdown ? dream.vividnessBreakdown[m.id] : Math.round(m.max / 2);
+        const naBox = document.getElementById(`na-${m.id}`);
+        const slider = document.getElementById(`slider-${m.id}`);
+        if (val === null || val === undefined) {
+          naBox.checked = true;
+          slider.disabled = true;
+        } else {
+          naBox.checked = false;
+          slider.disabled = false;
+          slider.value = val;
+        }
+      });
+      recalculateVividness();
+
+      selectedEmotions = new Set(dream.emotions || []);
+      renderEmotionPills();
+
+      selectedTags = new Set(dream.tags || []);
+      renderTagPicker();
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.deleteDream = async function(id) {
+      if (!confirm('Permanently delete this dream entry?')) return;
+
+      if (isDemoMode) {
+        dreams = dreams.filter(d => d.id !== id);
+        localStorage.setItem('nocturne_demo_dreams', JSON.stringify(dreams));
+        renderDreams();
+        return;
+      }
+
+      try {
+        setSyncStatus('Deleting...', 'bg-amber-400');
+        await deleteDoc(doc(db, 'users', currentUser.uid, 'dreams', id));
+        setSyncStatus('Synced to Cloud', 'bg-emerald-400');
+      } catch (err) {
+        setSyncStatus('Delete Failed', 'bg-red-500');
+        showCloudError(err.message);
+      }
+    };
+
+    window.resetForm = function() {
+      document.getElementById('dream-form').reset();
+      document.getElementById('edit-dream-id').value = '';
+      document.getElementById('form-heading').textContent = 'Log Dream Blueprint';
+      document.getElementById('save-dream-btn').textContent = 'Archive Dream Entry';
+      document.getElementById('cancel-edit-btn').classList.add('hidden');
+
+      document.getElementById('dream-date-unknown').checked = false;
+      toggleUnknownDate();
+      document.getElementById('dream-date').value = new Date().toISOString().split('T')[0];
+
+      VIVIDNESS_METRICS.forEach(m => {
+        document.getElementById(`na-${m.id}`).checked = false;
+        const slider = document.getElementById(`slider-${m.id}`);
+        slider.disabled = false;
+        slider.value = Math.round(m.max / 2);
+      });
+      recalculateVividness();
+
+      selectedEmotions.clear();
+      renderEmotionPills();
+
+      selectedTags.clear();
+      renderTagPicker();
+    };
+
+    // RENDER ARCHIVE & STATS
+    function formatDisplayDate(dateStr) {
+      if (!dateStr) return 'Date Unknown';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', year: 'numeric'
+        });
+      }
+      return dateStr;
+    }
+
+    window.renderDreams = function() {
+      const searchQ = document.getElementById('archive-search').value.trim().toLowerCase();
+      const catFilter = document.getElementById('filter-category').value;
+      const emFilter = document.getElementById('filter-emotion').value;
+
+      // Update Top Stats
+      document.getElementById('stat-total').textContent = dreams.length;
+      if (dreams.length > 0) {
+        const avg = Math.round(dreams.reduce((acc, d) => acc + (Number(d.vividness) || 0), 0) / dreams.length);
+        document.getElementById('stat-avg-vivid').textContent = `${avg}/100`;
+
+        const tagCounts = {};
+        dreams.forEach(d => (d.tags || []).forEach(t => tagCounts[t] = (tagCounts[t] || 0) + 1));
+        const topEntry = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0];
+        document.getElementById('stat-top-tag').textContent = topEntry ? `${topEntry[0]} (${topEntry[1]})` : '—';
+      } else {
+        document.getElementById('stat-avg-vivid').textContent = '—';
+        document.getElementById('stat-top-tag').textContent = '—';
+      }
+
+      const filtered = dreams.filter(d => {
+        const matchesSearch = !searchQ ||
+          (d.title || '').toLowerCase().includes(searchQ) ||
+          (d.content || '').toLowerCase().includes(searchQ) ||
+          (d.date || '').toLowerCase().includes(searchQ) ||
+          (d.tags || []).some(t => t.toLowerCase().includes(searchQ));
+
+        const matchesCategory = catFilter === 'ALL' ||
+          (d.tags || []).some(t => getTagStyle(t).category === catFilter);
+
+        const matchesEmotion = emFilter === 'ALL' ||
+          (d.emotions || []).includes(emFilter);
+
+        return matchesSearch && matchesCategory && matchesEmotion;
+      });
+
+      const listEl = document.getElementById('dreams-list');
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="draft-panel p-8 text-center font-mono-code text-xs text-zinc-500">
+            No dream blueprints match your current filter.
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(d => {
+        const displayDate = formatDisplayDate(d.date);
+        const emotionsHtml = (d.emotions || []).map(em =>
+          `<span class="px-2 py-0.5 text-[10px] font-mono-code uppercase bg-zinc-900 border border-zinc-700 text-zinc-300">${em}</span>`
+        ).join('');
+
+        const tagsHtml = (d.tags || []).map(t => {
+          const style = getTagStyle(t);
+          return `<span class="px-2 py-0.5 text-[11px] border ${style.badgeClass}">${t}</span>`;
+        }).join('');
+
+        return `
+          <article class="draft-panel p-5 space-y-3 hover:border-zinc-600 transition">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <div class="flex flex-wrap items-center gap-2 font-mono-code text-[11px] text-zinc-400">
+                  <span>${displayDate}</span>
+                  <span>•</span>
+                  <span class="text-zinc-200">VIVIDNESS: ${d.vividness ?? 0}/100</span>
+                </div>
+                <h3 class="font-display text-lg text-zinc-100 mt-1">${d.title}</h3>
+              </div>
+              <div class="flex items-center gap-2 font-mono-code text-[11px] shrink-0">
+                <button onclick="editDream('${d.id}')" class="px-2 py-1 border border-zinc-800 text-zinc-400 hover:text-zinc-100 hover:border-zinc-500">EDIT</button>
+                <button onclick="deleteDream('${d.id}')" class="px-2 py-1 border border-zinc-800 text-zinc-500 hover:text-red-400 hover:border-red-900">DEL</button>
+              </div>
+            </div>
+
+            <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">${d.content}</p>
+
+            ${emotionsHtml ? `<div class="flex flex-wrap gap-1.5 pt-1">${emotionsHtml}</div>` : ''}
+            ${tagsHtml ? `<div class="flex flex-wrap gap-1.5 pt-1 border-t border-zinc-800/80">${tagsHtml}</div>` : ''}
+          </article>
+        `;
+      }).join('');
+    };
+
+    // ESCHER ISOMETRIC TESSELLATION BACKGROUND CANVAS
+    let motionEnabled = true;
+    window.toggleMotion = function() {
+      motionEnabled = !motionEnabled;
+      document.body.classList.toggle('motion-paused', !motionEnabled);
+      document.getElementById('motion-toggle-btn').textContent = `Motion: ${motionEnabled ? 'On' : 'Paused'}`;
+    };
+
+    function startEscherCanvas() {
+      const canvas = document.getElementById('escher-canvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, t = 0;
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function drawIsometricCube(cx, cy, size, pulse) {
+        const angle = Math.PI / 6;
+        const dx = Math.cos(angle) * size;
+        const dy = Math.sin(angle) * size;
+
+        // Top face
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - size);
+        ctx.lineTo(cx + dx, cy - dy);
+        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx - dx, cy - dy);
+        ctx.closePath();
+        ctx.fillStyle = `rgba(228, 228, 231, ${0.03 + pulse * 0.02})`;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(113, 113, 122, 0.25)';
+        ctx.stroke();
+
+        // Left face
+        ctx.beginPath();
+        ctx.moveTo(cx - dx, cy - dy);
+        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx, cy + size);
+        ctx.lineTo(cx - dx, cy + dy);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(39, 39, 42, 0.18)';
+        ctx.fill();
+        ctx.stroke();
+
+        // Right face
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + dx, cy - dy);
+        ctx.lineTo(cx + dx, cy + dy);
+        ctx.lineTo(cx, cy + size);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(9, 9, 11, 0.35)';
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      function animate() {
+        if (motionEnabled) {
+          t += 0.008;
+          ctx.clearRect(0, 0, w, h);
+
+          const size = 46;
+          const stepX = Math.cos(Math.PI / 6) * size * 2;
+          const stepY = size * 1.5;
+
+          for (let row = -1; row < h / stepY + 2; row++) {
+            for (let col = -1; col < w / stepX + 2; col++) {
+              const offsetX = (row % 2 === 0) ? 0 : stepX / 2;
+              const cx = col * stepX + offsetX;
+              const cy = row * stepY;
+              const wave = Math.sin(t + col * 0.4 + row * 0.4);
+              drawIsometricCube(cx, cy, size * (0.94 + wave * 0.05), wave);
+            }
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    initFormControls();
+    startEscherCanvas();
+  </script>
+</body>
+</html>
