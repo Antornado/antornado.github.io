@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nocturne // Surreality — Architectural Dream Journal</title>
+  <title>Surreality — The Dream Archives</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -125,7 +125,7 @@
           <line x1="90" y1="80" x2="50" y2="26" />
           <line x1="10" y1="80" x2="76" y2="72" />
         </svg>
-        <h1 class="font-display text-2xl tracking-[0.2em] uppercase text-zinc-100">Nocturne // Surreality</h1>
+        <h1 class="font-display text-2xl tracking-[0.2em] uppercase text-zinc-100">Surreality</h1>
         <p class="font-mono-code text-[11px] uppercase tracking-widest text-zinc-500 mt-1">Architectural Dream Archive</p>
       </div>
 
@@ -174,7 +174,7 @@
             <line x1="10" y1="80" x2="76" y2="72" />
           </svg>
           <div>
-            <h1 class="font-display text-base sm:text-lg tracking-[0.18em] uppercase text-zinc-100 leading-none">Nocturne // Surreality</h1>
+            <h1 class="font-display text-base sm:text-lg tracking-[0.18em] uppercase text-zinc-100 leading-none">Surreality</h1>
             <div class="flex items-center gap-2 mt-1">
               <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               <span id="sync-status" class="font-mono-code text-[10px] uppercase tracking-widest text-zinc-400">Synced to Cloud</span>
@@ -742,7 +742,7 @@
       document.getElementById('user-badge').textContent = 'OFFLINE DEMO';
       setSyncStatus('Local Demo Mode', 'bg-amber-400');
 
-      const saved = localStorage.getItem('nocturne_demo_dreams');
+      const saved = localStorage.getItem('e_demo_dreams');
       dreams = saved ? JSON.parse(saved) : [];
       renderDreams();
     };
